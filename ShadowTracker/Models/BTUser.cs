@@ -34,5 +34,10 @@ namespace ShadowTracker.Models
         public string ImageFileName { get; set; }
         public byte[] ImageFileData { get; set; }
         public string ImageContentType { get; set; }
+
+        public int CompanyId { get; set; }
+        public virtual Company Company { get; set; }
+
+        public virtual ICollection<Project> Projects { get; set; } = new HashSet<Project>();
     }
 }
