@@ -14,6 +14,8 @@ namespace ShadowTracker.Data
         {
         }
 
+        //Creates tables in the PostgreSQL database. 
+        //Note that BTUser is not listed because it inherits the Identity class from ASPNETUsers
         public virtual DbSet<Company> Companies { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<Ticket> Tickets { get; set; }
