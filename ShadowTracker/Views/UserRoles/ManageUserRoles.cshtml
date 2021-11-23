@@ -1,0 +1,16 @@
+﻿<div class="row">
+    @foreach (var member in Model)
+    {
+        <div class="card col-6" style="margin:2px">
+            <div class="card-body">
+                <h2 class="m-t-0 h3"><b>Assign Roles to @member.BTUser.FullName</b></h2>
+                <p class="text-muted font-13 m-b-30">
+                    This form displays the current roles assigned to the user: @member.BTUser.FullName. Use the dropdown to select the roles that this user should be assigned. Once roles are selected, click "Assign Roles" to submit the form.
+                </p>
+                <hr />
+                <form>
+                </form>
+            </div>
+        </div>
+    }
+</div>

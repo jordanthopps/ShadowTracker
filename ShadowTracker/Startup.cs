@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ShadowTracker.Data;
 using ShadowTracker.Models;
+using ShadowTracker.Services;
+using ShadowTracker.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,10 @@ namespace ShadowTracker
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
+
+            //Custom Services
+            services.AddScoped<IBTRolesService,BTRolesService>();
+            services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
 
             services.AddControllersWithViews();
         }
