@@ -69,14 +69,14 @@ namespace ShadowTracker.Data
             await SeedRolesAsync(roleManagerSvc);
             await SeedCompaniesAsync(dbContextSvc);
             await SeedUsersAsync(userManagerSvc);
-            //await SeedDemoUsersAsync(userManagerSvc);
+            await SeedDemoUsersAsync(userManagerSvc);
             await SeedProjectPrioritiesAsync(dbContextSvc);
             await SeedTicketStatusesAsync(dbContextSvc);
             await SeedTicketPrioritiesAsync(dbContextSvc);
             await SeedTicketTypesAsync(dbContextSvc);
             //await SeedNotificationTypes(dbContextSvc);
-            //await SeedProjectsAsync(dbContextSvc);
-            //await SeedTicketsAsync(dbContextSvc);
+            await SeedProjectsAsync(dbContextSvc);
+            await SeedTicketsAsync(dbContextSvc);
 
         }
 
@@ -86,7 +86,7 @@ namespace ShadowTracker.Data
             await roleManagerSvc.CreateAsync(new IdentityRole(BTRoles.ProjectManager.ToString()));
             await roleManagerSvc.CreateAsync(new IdentityRole(BTRoles.Developer.ToString()));
             await roleManagerSvc.CreateAsync(new IdentityRole(BTRoles.Submitter.ToString()));
-            await roleManagerSvc.CreateAsync(new IdentityRole(BTRoles.ProjectManager.ToString()));
+            await roleManagerSvc.CreateAsync(new IdentityRole(BTRoles.DemoUser.ToString()));
         }
 
         private static async Task SeedCompaniesAsync(ApplicationDbContext dbContextSvc)
@@ -774,7 +774,7 @@ namespace ShadowTracker.Data
                     new TicketPriority() { Name = BTTicketPriority.Urgent.ToString() },
                 };
 
-                var dbTicketPriorities = dbContextSvc.ProjectPriorities.Select(c => c.Name).ToList();
+                var dbTicketPriorities = dbContextSvc.TicketPriorities.Select(c => c.Name).ToList();
 
                 await dbContextSvc.TicketPriorities.AddRangeAsync(ticketPriorities.Where(c => !dbTicketPriorities.Contains(c.Name)));
 
