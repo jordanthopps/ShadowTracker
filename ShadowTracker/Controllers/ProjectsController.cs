@@ -2,35 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShadowTracker.Data;
+using ShadowTracker.Extensions;
 using ShadowTracker.Models;
+using ShadowTracker.Services.Interfaces;
 
 namespace ShadowTracker.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTProjectService _projectService;
 
-        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager)
+        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService)
         {
             _context = context;
             _userManager = userManager;
+            _projectService = projectService;
         }
 
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
-            var applicationDbContext = _context.Projects
-                                        .Include(p => p.Company)
-                                        .Include(p => p.ProjectPriority)
-                                        .Where(p=>p.CompanyId == companyId);
-            return View(await applicationDbContext.ToListAsync());
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> model = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+
+            return View(model);
+        }
+
+        //Get: My Projects
+        public async Task<IActionResult> MyProjects()
+        {
+            //Get Current User Id
+            
         }
 
         // GET: Projects/Details/5
