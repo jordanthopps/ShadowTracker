@@ -60,9 +60,9 @@ namespace ShadowTracker.Models
         
         public virtual ProjectPriority ProjectPriority { get; set; }
 
-        public ICollection<BTUser> Members = new HashSet<BTUser>();
-        public ICollection<Ticket> Tickets = new HashSet<Ticket>();
-        public ICollection<Notification> Notifications = new HashSet<Notification>();
+        public virtual ICollection<BTUser> Members { get; set; } = new HashSet<BTUser>();
+        public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
+        public virtual ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
 
     }
 }

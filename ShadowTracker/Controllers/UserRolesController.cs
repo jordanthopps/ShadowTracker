@@ -19,7 +19,9 @@ namespace ShadowTracker.Controllers
         private readonly IBTCompanyInfoService _companyInfoService;
         private readonly UserManager<BTUser> _userManager;
 
-        public UserRolesController(IBTRolesService rolesService, IBTCompanyInfoService companyInfoService, UserManager<BTUser> userManager) //This is the constructor. The injection part 1
+        public UserRolesController(IBTRolesService rolesService,
+                                    IBTCompanyInfoService companyInfoService,
+                                    UserManager<BTUser> userManager)
         {
             _rolesService = rolesService;
             _companyInfoService = companyInfoService;
@@ -29,8 +31,9 @@ namespace ShadowTracker.Controllers
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
-            //psuedo code: Add an instance of the ViewModel as a List
+            //Add an instance of the ViewModel as a List
             List<ManageUserRolesViewModel> model = new List<ManageUserRolesViewModel>();
+
             //Get CompanyId
             int companyId = User.Identity.GetCompanyId().Value;
 
@@ -58,6 +61,7 @@ namespace ShadowTracker.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
         {
             int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
@@ -68,14 +72,14 @@ namespace ShadowTracker.Controllers
             // Get Roles for the User
             IEnumerable<string> roles = await _rolesService.GetUserRolesAsync(btUser);
 
-            //Grab the selected role
             string userRole = member.SelectedRoles.FirstOrDefault();
-            if (!string.IsNullOrEmpty(member.SelectedRoles.FirstOrDefault()))
+
+            if (!string.IsNullOrEmpty(userRole))
             {
-                // Remove User from their roles
+                //Remove User from their roles
                 if (await _rolesService.RemoveUserFromRolesAsync(btUser, roles))
                 {
-
+                    //Add User to the new role
                     await _rolesService.AddUserToRoleAsync(btUser, userRole);
 
                 }
@@ -84,5 +88,8 @@ namespace ShadowTracker.Controllers
             return RedirectToAction(nameof(ManageUserRoles));
 
         }
+
+
     }
 }
+

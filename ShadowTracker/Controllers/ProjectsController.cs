@@ -20,12 +20,14 @@ namespace ShadowTracker.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
+        private readonly IBTRolesService _rolesService;
 
-        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService)
+        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
+            _rolesService = rolesService;
         }
 
         // GET: Projects
@@ -38,11 +40,39 @@ namespace ShadowTracker.Controllers
             return View(model);
         }
 
+
+
         //Get: My Projects
         public async Task<IActionResult> MyProjects()
         {
             //Get Current User Id
+            string userId = _userManager.GetUserId(User);
+
+            List<Project> model = await _projectService.GetUserProjectsAsync(userId);
+
+            return View(model);
             
+        }
+        
+        //Get: All Projects
+        public async Task<IActionResult> AllProjects()
+        {
+            //Get Current User Id
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> model = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+
+            return View(model);
+            
+        }
+
+        public async Task<IActionResult> ArchivedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> model = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+
+            return View(model);
         }
 
         // GET: Projects/Details/5
