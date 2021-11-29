@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using ShadowTracker.Data;
 using ShadowTracker.Extensions;
 using ShadowTracker.Models;
+using ShadowTracker.Models.Enums;
+using ShadowTracker.Models.ViewModels;
 using ShadowTracker.Services.Interfaces;
 
 namespace ShadowTracker.Controllers
@@ -21,13 +23,15 @@ namespace ShadowTracker.Controllers
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
         private readonly IBTRolesService _rolesService;
+        private readonly IBTLookupService _lookupService;
 
-        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService)
+        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _rolesService = rolesService;
+            _lookupService = lookupService;
         }
 
         // GET: Projects
@@ -96,11 +100,19 @@ namespace ShadowTracker.Controllers
         }
 
         // GET: Projects/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id");
-            return View();
+            //Get Company Id
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            // Add ViewModel
+            AddProjectWithPMViewModel model = new();
+
+            //Load model/SelectLists with data
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.ProjectManager), companyId), "Id", "FullName");
+            model.Priority = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name" );
+
+            return View(model);
         }
 
         // POST: Projects/Create
@@ -108,17 +120,41 @@ namespace ShadowTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,StartDate,EndDate,Archived,CompanyId,ProjectPriorityId,FileName,FileData,FileContentType")] Project project)
+        public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
-            if (ModelState.IsValid)
+            if (model != null)
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
+                int companyId = User.Identity.GetCompanyId().Value;
+                try
+                {
+                    if(model.Project.ImageFormFile != null)
+                    {
+                        model.Project.ImageFormFile = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+                        model.Project.FileName = model.Project.ImageFormFile.FileName;
+                        model.Project.FileContentType = model.Project.ImageFormFile.ContentType;
+                    }
+                    model.Project.CompanyId = companyId;
+                    await _projectService.AddNewProjectAsync(model.Project);
+
+                    //Add PM if one was chose
+                    if (!string.IsNullOrEmpty(model.PmId))
+                    {
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
+                    }
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);
-            return View(project);
+           
+            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", model.Project.ProjectPriorityId);
+            return View(model.Project);
         }
 
         // GET: Projects/Edit/5

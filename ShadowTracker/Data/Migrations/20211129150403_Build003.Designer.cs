@@ -10,8 +10,8 @@ using ShadowTracker.Data;
 namespace ShadowTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211124154725_Build002")]
-    partial class Build002
+    [Migration("20211129150403_Build003")]
+    partial class Build003
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,21 @@ namespace ShadowTracker.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+            modelBuilder.Entity("BTUserProject", b =>
+                {
+                    b.Property<string>("MembersId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MembersId", "ProjectsId");
+
+                    b.HasIndex("ProjectsId");
+
+                    b.ToTable("BTUserProject");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -397,9 +412,6 @@ namespace ShadowTracker.Data.Migrations
                     b.Property<bool>("Archived")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("BTUserId")
-                        .HasColumnType("text");
-
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
@@ -434,8 +446,6 @@ namespace ShadowTracker.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BTUserId");
 
                     b.HasIndex("CompanyId");
 
@@ -711,6 +721,21 @@ namespace ShadowTracker.Data.Migrations
                     b.ToTable("TicketTypes");
                 });
 
+            modelBuilder.Entity("BTUserProject", b =>
+                {
+                    b.HasOne("ShadowTracker.Models.BTUser", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShadowTracker.Models.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -813,7 +838,7 @@ namespace ShadowTracker.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("ShadowTracker.Models.Project", "Project")
-                        .WithMany()
+                        .WithMany("Notifications")
                         .HasForeignKey("ProjectId");
 
                     b.HasOne("ShadowTracker.Models.BTUser", "Recipient")
@@ -841,10 +866,6 @@ namespace ShadowTracker.Data.Migrations
 
             modelBuilder.Entity("ShadowTracker.Models.Project", b =>
                 {
-                    b.HasOne("ShadowTracker.Models.BTUser", null)
-                        .WithMany("Projects")
-                        .HasForeignKey("BTUserId");
-
                     b.HasOne("ShadowTracker.Models.Company", "Company")
                         .WithMany("Projects")
                         .HasForeignKey("CompanyId")
@@ -871,7 +892,7 @@ namespace ShadowTracker.Data.Migrations
                         .HasForeignKey("OwnerUserId");
 
                     b.HasOne("ShadowTracker.Models.Project", "Project")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -995,11 +1016,6 @@ namespace ShadowTracker.Data.Migrations
                     b.Navigation("Ticket");
                 });
 
-            modelBuilder.Entity("ShadowTracker.Models.BTUser", b =>
-                {
-                    b.Navigation("Projects");
-                });
-
             modelBuilder.Entity("ShadowTracker.Models.Company", b =>
                 {
                     b.Navigation("Invites");
@@ -1007,6 +1023,13 @@ namespace ShadowTracker.Data.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("ShadowTracker.Models.Project", b =>
+                {
+                    b.Navigation("Notifications");
+
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("ShadowTracker.Models.Ticket", b =>
