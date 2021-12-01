@@ -24,14 +24,16 @@ namespace ShadowTracker.Controllers
         private readonly IBTProjectService _projectService;
         private readonly IBTRolesService _rolesService;
         private readonly IBTLookupService _lookupService;
+        private readonly IBTFileService _fileService;
 
-        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService)
+        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _rolesService = rolesService;
             _lookupService = lookupService;
+            _fileService = fileService;
         }
 
         // GET: Projects
@@ -87,10 +89,10 @@ namespace ShadowTracker.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects
-                .Include(p => p.Company)
-                .Include(p => p.ProjectPriority)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+
             if (project == null)
             {
                 return NotFound();
@@ -129,11 +131,13 @@ namespace ShadowTracker.Controllers
                 {
                     if(model.Project.ImageFormFile != null)
                     {
-                        model.Project.ImageFormFile = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+                        model.Project.FileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
                         model.Project.FileName = model.Project.ImageFormFile.FileName;
                         model.Project.FileContentType = model.Project.ImageFormFile.ContentType;
                     }
                     model.Project.CompanyId = companyId;
+                    model.Project.Created = DateTimeOffset.Now;
+
                     await _projectService.AddNewProjectAsync(model.Project);
 
                     //Add PM if one was chose
@@ -165,14 +169,24 @@ namespace ShadowTracker.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
+            int companyId = User.Identity.GetCompanyId().Value;
+            //Add ViewModel instance "AddProjectWithPMViewModel"
+            AddProjectWithPMViewModel model = new();
+
+            //Get Project based on Id
+            model.Project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+
+            //Load model/Selectlists with data
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.ProjectManager), companyId), "Id", "FullName");
+            model.Priority = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
+
+
+            if (model.Project == null)
             {
                 return NotFound();
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);
-            return View(project);
+
+            return View(model);
         }
 
         // POST: Projects/Edit/5
@@ -180,23 +194,33 @@ namespace ShadowTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,StartDate,EndDate,Archived,CompanyId,ProjectPriorityId,FileName,FileData,FileContentType")] Project project)
+        public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
-            if (id != project.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
+            if (model != null)
             {
                 try
                 {
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
-                }
+                    if (model.Project.ImageFormFile != null)
+                    {
+                        model.Project.FileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+                        model.Project.FileName = model.Project.ImageFormFile.FileName;
+                        model.Project.FileContentType = model.Project.ImageFormFile.ContentType;
+                    }
+
+                    await _projectService.UpdateProjectAsync(model.Project);
+
+                    //Add PM if one was chosen
+                    if (!string.IsNullOrEmpty(model.PmId))
+                    {
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
+                    }
+
+                    return RedirectToAction("Index");
+                            }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.Id))
+
+                    if (!await ProjectExists(model.Project.Id))
                     {
                         return NotFound();
                     }
@@ -205,14 +229,13 @@ namespace ShadowTracker.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);
-            return View(project);
+
+            ViewData["ProjectPriorityId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Id", model.Project.ProjectPriorityId);
+            return View(model.Project);
         }
 
-        // GET: Projects/Delete/5
+        // GET: Projects/Delete/5 //TODO: Remove _context
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -232,7 +255,7 @@ namespace ShadowTracker.Controllers
             return View(project);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Projects/Delete/5 //TODO: Remove _context
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -243,9 +266,11 @@ namespace ShadowTracker.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private async Task<bool> ProjectExists(int id)
         {
-            return _context.Projects.Any(e => e.Id == id);
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            return (await _projectService.GetAllProjectsByCompanyAsync(companyId)).Any(p => p.Id == id);
         }
     }
 }

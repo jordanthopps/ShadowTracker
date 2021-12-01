@@ -48,6 +48,7 @@ namespace ShadowTracker
             services.AddScoped<IBTProjectService, BTProjectService>();
             services.AddScoped<IBTTicketService, BTTicketService>();
             services.AddScoped<IBTLookupService, BTLookupService> ();
+            services.AddScoped<IBTFileService, BTFileService>();
             services.AddControllersWithViews();
         }
 

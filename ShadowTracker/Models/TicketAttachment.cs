@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using ShadowTracker.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using static ShadowTracker.Extensions.MaxFileSizeAttribute;
 
 namespace ShadowTracker.Models
 {
@@ -31,7 +33,10 @@ namespace ShadowTracker.Models
         //Byte Array Image Properties
         //This property represents a physical file chosen by the user
         [NotMapped]
+        [DisplayName("Select a file")]
         [DataType(DataType.Upload)]
+        [MaxFileSize(1024 * 1024)]
+        [AllowedExtensions(new string[] { ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx", ".pdf" })]
         public IFormFile ImageFormFile { get; set; }
 
         //This represents the byte data not the physical file
