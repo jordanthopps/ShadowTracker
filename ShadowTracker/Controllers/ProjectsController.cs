@@ -19,33 +19,20 @@ namespace ShadowTracker.Controllers
     [Authorize]
     public class ProjectsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
         private readonly IBTRolesService _rolesService;
         private readonly IBTLookupService _lookupService;
         private readonly IBTFileService _fileService;
 
-        public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService)
+        public ProjectsController( UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService)
         {
-            _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
         }
-
-        // GET: Projects
-        public async Task<IActionResult> Index()
-        {
-            int companyId = User.Identity.GetCompanyId().Value;
-
-            List<Project> model = await _projectService.GetAllProjectsByCompanyAsync(companyId);
-
-            return View(model);
-        }
-
 
 
         //Get: My Projects
@@ -72,6 +59,7 @@ namespace ShadowTracker.Controllers
             
         }
 
+        //GET: Archived Projects
         public async Task<IActionResult> ArchivedProjects()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -79,6 +67,92 @@ namespace ShadowTracker.Controllers
             List<Project> model = await _projectService.GetAllProjectsByCompanyAsync(companyId);
 
             return View(model);
+        }
+
+
+        //GET: UnAssigned Projects
+        public async Task<IActionResult> UnassignedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> model = await _projectService.GetUnassignedProjectsAsync(companyId);
+
+            return View(model);
+        }
+
+        [Authorize(Roles="Admin")]
+        [HttpGet]
+        public async Task<IActionResult> AssignPM(int projectId)
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            AssignPMViewModel model = new();
+
+            model.Project = await _projectService.GetProjectByIdAsync(projectId, companyId);
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.ProjectManager),companyId),"Id","FullName");
+
+            return View(model);
+        }
+
+        [Authorize(Roles="Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignPM(AssignPMViewModel model)
+        {
+            if(string.IsNullOrEmpty(model.PMId))
+            {
+                await _projectService.AddProjectManagerAsync(model.PMId, model.Project.Id);
+                return RedirectToAction(nameof(Details), new { id = model.Project.Id });
+            }
+
+            return RedirectToAction(nameof(AssignPM), new { projectId = model.Project.Id });
+        }
+
+        [HttpGet]
+        [Authorize(Roles="Project,ProjectManager")]
+        public async Task<IActionResult> AssignMembers(int projectId)
+        {
+            ProjectMembersViewModel model = new();
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            model.Project = await _projectService.GetProjectByIdAsync(projectId, companyId);
+
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Developer), companyId);
+            List<BTUser> submitters = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Submitter), companyId);
+
+            List<BTUser> members = developers.Concat(submitters).ToList();
+
+            List<string> projectMembers = model.Project.Members.Select(p => p.Id).ToList();
+            model.Members = new MultiSelectList(members, "Id", "FullName", projectMembers);
+
+            return View(model);
+        }
+
+        [Authorize("Admin,ProjectManager")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
+        {
+            if (model.SelectedUsers != null)
+            {
+                List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id)).Select(p => p.Id).ToList();
+
+                //Remove current members
+                foreach (string member in memberIds)
+                {
+                    await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
+                }
+
+                //Add selected members
+                foreach (string member in model.SelectedUsers)
+                {
+                    await _projectService.AddUserToProjectAsync(member, model.Project.Id);
+                }
+            }
+
+            //go to project details
+            return RedirectToAction(nameof(Details), new { id = model.Project.Id });
         }
 
         // GET: Projects/Details/5
@@ -140,7 +214,7 @@ namespace ShadowTracker.Controllers
 
                     await _projectService.AddNewProjectAsync(model.Project);
 
-                    //Add PM if one was chose
+                    //Add PM if one was chosen
                     if (!string.IsNullOrEmpty(model.PmId))
                     {
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
@@ -156,8 +230,8 @@ namespace ShadowTracker.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-           
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", model.Project.ProjectPriorityId);
+
+            ViewData["ProjectPriorityId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Id", model.Project.ProjectPriorityId);
             return View(model.Project);
         }
 
@@ -235,18 +309,17 @@ namespace ShadowTracker.Controllers
             return View(model.Project);
         }
 
-        // GET: Projects/Delete/5 //TODO: Remove _context
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Projects/Archive/5
+        public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var project = await _context.Projects
-                .Include(p => p.Company)
-                .Include(p => p.ProjectPriority)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int companyId = User.Identity.GetCompanyId().Value;
+            Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+
             if (project == null)
             {
                 return NotFound();
@@ -255,15 +328,18 @@ namespace ShadowTracker.Controllers
             return View(project);
         }
 
-        // POST: Projects/Delete/5 //TODO: Remove _context
-        [HttpPost, ActionName("Delete")]
+        // POST: Projects/Archive/5 
+        [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ArchiveConfirm(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            int companyId = User.Identity.GetCompanyId().Value;
+            Project project = await _projectService.GetProjectByIdAsync(id, companyId);
+
+            project.Archived = true;
+
+            await _projectService.ArchiveProjectAsync(project);
+            return RedirectToAction(nameof(AllProjects));
         }
 
         private async Task<bool> ProjectExists(int id)

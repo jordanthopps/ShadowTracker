@@ -28,11 +28,11 @@ namespace ShadowTracker.Models
 
         [DisplayName("Start Date")]
         [DataType(DataType.Date)]
-        public DateTimeOffset? StartDate { get; set; } //Return to and fix.
+        public DateTimeOffset? StartDate { get; set; } 
 
         [DisplayName("End Date")]
         [DataType(DataType.Date)]
-        public DateTimeOffset? EndDate { get; set; } //Return to and fix.
+        public DateTimeOffset? EndDate { get; set; } 
 
         [DisplayName("Archived")]
         public bool Archived { get; set; }

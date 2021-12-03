@@ -5,6 +5,7 @@
 
 @inject UserManager<BTUser> UserManager
 @inject IBTProjectService ProjectService
+@inject IBTTicketHistoryService HistoryService
 
 
 @{
@@ -88,7 +89,7 @@
                                         <p class="text-muted m-b-0">Project Manager</p>
                                         @if (User.IsInRole(nameof(BTRoles.Admin)) || (btUser.Id == projectManager.Id))
                                         {
-                                            <a class="btn btn-xs alert-primary" style="font:small" asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@Model.Id">Manage Team</a>}
+                                            <a class="btn btn-xs alert-primary" style="font:small" asp-action="AssignMembers" asp-controller="Projects" asp-route-projectId="@Model.Id">Manage Team</a>}
                                     </div>
                                 </div> }
                             else
@@ -150,7 +151,18 @@
                         </div>
                         <div class="body" style="overflow-y:auto;height:300px;background-color:antiquewhite">
                             @* Project Activity loop *@
-                            [Project Activity  e.g. Ticket History]
+                            @foreach (TicketHistory history in await HistoryService.GetProjectTicketsHistoriesAsync(Model.Id, btUser.CompanyId))
+                            {
+                                <div class="">
+                                    <span class="date">@history.Created.ToString("dd MMM yyyy")</span>
+                                    <h6>@history.Description</h6>
+                                    <span>By: <a href="" title="@history.User.FullName">@history.User.FullName</a></span>
+                                    <div class="">
+                                        <p>The ticket <b>@history.Property</b>  was edited</p>
+                                        <p>@($"Previous {history.Property}:  {history.OldValue}")</p>
+                                        <p>@($"Current {history.Property}:  {history.NewValue}")</p>
+                                    </div>
+                                </div>}
                         </div>
 
                     </div>
@@ -177,28 +189,40 @@
 
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.Tickets)
+                                        @foreach (var ticket in Model.Tickets)
                                         {
                                             <tr>
                                                 <td>
-                                                    @Html.DisplayFor(modelItem => item.Title)
+                                                    @Html.DisplayFor(modelItem => ticket.Title)
+                                                </td>
+
+                                                @if (!string.IsNullOrEmpty(ticket.DeveloperUserId))
+                                                {
+                                                    <td>
+                                                        @ticket.DeveloperUser?.FullName
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td><a class="btn btn-primary btn-small" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-ticketId="@ticket.Id">Assign Developer</a></td>
+                                                }
+
+                                                <td>
+                                                    @ticket.DeveloperUser?.FullName
                                                 </td>
                                                 <td>
-                                                    @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
+                                                    @Html.DisplayFor(modelItem => ticket.TicketStatus.Name)
                                                 </td>
                                                 <td>
-                                                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                                                    @Html.DisplayFor(modelItem => ticket.TicketPriority.Name)
                                                 </td>
                                                 <td>
-                                                    @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                                                    @Html.DisplayFor(modelItem => ticket.Created.Date.ToString("MM.dd.yyyy"))
                                                 </td>
                                                 <td>
-                                                    @Html.DisplayFor(modelItem => item.Created.Date.ToString("MM.dd.yyyy"))
-                                                </td>
-                                                <td>
-                                                    <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@item.Id">Edit</a> |
-                                                    <a asp-action="Details" asp-controller="Tickets" asp-route-id="@item.Id">Details</a> |
-                                                    <a asp-action="Delete" asp-controller="Tickets" asp-route-id="@item.Id">Delete</a>
+                                                    <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">Edit</a> |
+                                                    <a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id">Details</a> |
+                                                    <a asp-action="Delete" asp-controller="Tickets" asp-route-id="@ticket.Id">Delete</a>
                                                 </td>
                                             </tr>
                                         }

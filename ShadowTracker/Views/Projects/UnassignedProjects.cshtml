@@ -1,14 +1,11 @@
 ﻿@model IEnumerable<ShadowTracker.Models.Project>
 
 @{
-    ViewData["Title"] = "All Projects";
+    ViewData["Title"] = "Unassigned Projects";
 }
 
-<h1>Index</h1>
+<h1>Unassigned Projects</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -29,18 +26,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Archived)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileName)
-            </th>
+            </th>    
             <th>
                 @Html.DisplayNameFor(model => model.FileData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileContentType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ProjectPriority)
@@ -70,25 +58,16 @@
                 @Html.DisplayFor(modelItem => item.Archived)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FileName)
-            </td>
-            <td>
                 @if (item.FileData != null)
                 {
                     <img style="width:60px;height;60px" src="data:image/*;base64,@(Convert.ToBase64String(item.FileData))" alt="" />
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FileContentType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Id)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="AssignPM" asp-route-projectId="@item.Id">AssignPM</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
             </td>

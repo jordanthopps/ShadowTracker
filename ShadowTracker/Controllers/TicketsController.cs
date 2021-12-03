@@ -12,6 +12,7 @@ using ShadowTracker.Data;
 using ShadowTracker.Extensions;
 using ShadowTracker.Models;
 using ShadowTracker.Models.Enums;
+using ShadowTracker.Models.ViewModels;
 using ShadowTracker.Services.Interfaces;
 
 namespace ShadowTracker.Controllers
@@ -19,20 +20,20 @@ namespace ShadowTracker.Controllers
     [Authorize]
     public class TicketsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IBTTicketService _ticketService;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTLookupService _lookupService;
         private readonly IBTProjectService _projectService;
         private readonly IBTFileService _fileService;
+        private readonly IBTTicketHistoryService _ticketHistoryService;
 
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTTicketService ticketService, IBTLookupService lookupService, IBTProjectService projectService)
+        public TicketsController(UserManager<BTUser> userManager, IBTTicketService ticketService, IBTLookupService lookupService, IBTProjectService projectService, IBTTicketHistoryService ticketHistoryService)
         {
-            _context = context;
             _userManager = userManager;
             _ticketService = ticketService;
             _lookupService = lookupService;
             _projectService = projectService;
+            _ticketHistoryService = ticketHistoryService;
         }
 
         // GET: Tickets
@@ -73,7 +74,57 @@ namespace ShadowTracker.Controllers
             return View(model);
         }
 
+        //GET: Assign Developer to Ticket
+        [Authorize(Roles ="Admin,ProjectManager")]
+        [HttpGet]
+        public async Task<IActionResult> AssignDeveloper(int? ticketId)
+        {
+                if(ticketId == null)
+                {
+                    return NotFound();
+                }    
 
+            AssignDeveloperViewModel model = new();
+
+            model.Ticket = await _ticketService.GetTicketByIdAsync(ticketId.Value);
+            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId,nameof(BTRoles.Developer)), "Id", "FullName");
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Admin,ProjectManager")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
+        {
+            if (model.DeveloperId != null)
+            {
+
+                string userId = _userManager.GetUserId(User);
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+                try
+                {
+                    await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+
+                return RedirectToAction(nameof(Details), new { id = model.DeveloperId });
+
+                //Add Ticket History
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+                await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, userId);
+
+                //Add Ticket Notification
+
+
+            }
+
+            return RedirectToAction(nameof(AssignDeveloper), new { ticketId = model.Ticket.Id });
+
+        }
 
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -137,6 +188,8 @@ namespace ShadowTracker.Controllers
                     await _ticketService.AddNewTicketAsync(ticket);
 
                     //TODO: Ticket History 
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    await _ticketHistoryService.AddHistoryAsync(null, newTicket, userId);
 
                     //TODO: Ticket Notification
 
@@ -199,6 +252,10 @@ namespace ShadowTracker.Controllers
 
             if (ModelState.IsValid)
             {
+                string userId = _userManager.GetUserId(User);
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+
+
                 try
                 {
                     ticket.Updated = DateTimeOffset.Now;
@@ -206,7 +263,7 @@ namespace ShadowTracker.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TicketExists(ticket.Id))
+                    if (!await TicketExists(ticket.Id))
                     {
                         return NotFound();
                     }
@@ -215,6 +272,11 @@ namespace ShadowTracker.Controllers
                         throw;
                     }
                 }
+
+                //TODO: Ticket History
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, userId);
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -223,6 +285,31 @@ namespace ShadowTracker.Controllers
             ViewData["TicketStatusId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketStatusId);
             ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketComment([Bind("Id, TicketId,Comment")] TicketComment ticketComment)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.Created = DateTimeOffset.Now;
+
+                    await _ticketService.AddTicketCommentAsync(ticketComment);
+
+                    await _ticketHistoryService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+            return RedirectToAction("Details", new { id = ticketComment.TicketId });
         }
 
         [HttpPost]
@@ -242,6 +329,9 @@ namespace ShadowTracker.Controllers
 
                 await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
                 statusMessage = "Success: New attachment added to Ticket.";
+
+                await _ticketHistoryService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
+
             }
             else
             {
@@ -264,22 +354,13 @@ namespace ShadowTracker.Controllers
             return File(fileData, $"application/{ext}");
         }
 
-        // GET: Tickets/Delete/5
-        public async Task<IActionResult> Delete(int? id) //TODO: Remove _context
+        // GET: Tickets/Archive/5
+        public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            //var ticket = await _context.Tickets
-            //    .Include(t => t.DeveloperUser)
-            //    .Include(t => t.OwnerUser)
-            //    .Include(t => t.Project)
-            //    .Include(t => t.TicketPriority)
-            //    .Include(t => t.TicketStatus)
-            //    .Include(t => t.TicketType)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
 
             Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
 
@@ -292,20 +373,21 @@ namespace ShadowTracker.Controllers
         }
 
         // POST: Tickets/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id) //TODO: Remove _context
+        public async Task<IActionResult> ArchiveConfirmed(int id)
         {
             Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
-            ticket.Archived = false;
+            ticket.Archived = true;
             await _ticketService.UpdateTicketAsync(ticket);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AllTickets));
         }
 
-        private bool TicketExists(int id)
+        private async Task<bool> TicketExists(int id)
         {
-            return _context.Tickets.Any(e => e.Id == id);
+            int companyId = User.Identity.GetCompanyId().Value;
+            return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
         }
     }
 }
