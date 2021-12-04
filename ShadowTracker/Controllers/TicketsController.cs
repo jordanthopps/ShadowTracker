@@ -111,7 +111,6 @@ namespace ShadowTracker.Controllers
                     throw;
                 }
 
-                return RedirectToAction(nameof(Details), new { id = model.DeveloperId });
 
                 //Add Ticket History
                 Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
@@ -119,6 +118,7 @@ namespace ShadowTracker.Controllers
 
                 //Add Ticket Notification
 
+                return RedirectToAction(nameof(Details), new { id = model.DeveloperId });
 
             }
 
@@ -289,7 +289,7 @@ namespace ShadowTracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTicketComment([Bind("Id, TicketId,Comment")] TicketComment ticketComment)
+        public async Task<IActionResult> AddTicketComment([Bind("Id,TicketId,Comment")] TicketComment ticketComment)
         {
             if (ModelState.IsValid)
             {
@@ -314,16 +314,25 @@ namespace ShadowTracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
+        public async Task<IActionResult> AddTicketAttachment([Bind("Id,ImageFormFile,Description,TicketId")] TicketAttachment ticketAttachment)
         {
             string statusMessage;
-
+            
             if (ModelState.IsValid && ticketAttachment.ImageFormFile != null)
             {
-                ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.ImageFormFile);
-                ticketAttachment.FileName = ticketAttachment.ImageFormFile.FileName;
-                ticketAttachment.FileContentType = ticketAttachment.ImageFormFile.ContentType;
 
+                try
+                {
+                    ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.ImageFormFile);
+                    ticketAttachment.FileName = ticketAttachment.ImageFormFile.FileName;
+                    ticketAttachment.FileContentType = ticketAttachment.ImageFormFile.ContentType;
+
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    throw;
+                }
                 ticketAttachment.Created = DateTimeOffset.Now;
                 ticketAttachment.UserId = _userManager.GetUserId(User);
 

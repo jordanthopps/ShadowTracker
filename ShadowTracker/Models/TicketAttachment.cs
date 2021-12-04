@@ -20,7 +20,7 @@ namespace ShadowTracker.Models
         [DisplayName("Ticket Task")]
         public int? TicketTaskId { get; set; } //FK
 
-        [Required]
+       
         public string UserId { get; set; } //FK
 
         [DisplayName("Attachment Date")]
@@ -36,7 +36,7 @@ namespace ShadowTracker.Models
         [DisplayName("Select a file")]
         [DataType(DataType.Upload)]
         [MaxFileSize(1024 * 1024)]
-        [AllowedExtensions(new string[] { ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx", ".pdf" })]
+        [AllowedExtensions(new string[] { ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx", ".pdf" })]
         public IFormFile ImageFormFile { get; set; }
 
         //This represents the byte data not the physical file

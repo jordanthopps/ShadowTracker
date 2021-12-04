@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShadowTracker.Data;
+using ShadowTracker.Extensions;
 using ShadowTracker.Models;
+using ShadowTracker.Services.Interfaces;
 
 namespace ShadowTracker.Controllers
 {
@@ -15,10 +20,25 @@ namespace ShadowTracker.Controllers
     public class InvitesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTProjectService _projectService;
+        private readonly IEmailSender _emailService;
+        private readonly IBTInviteService _inviteService;
+        private readonly UserManager<BTUser> _userManager;
+        private readonly IDataProtector _protector;
 
-        public InvitesController(ApplicationDbContext context)
+        public InvitesController(ApplicationDbContext context, 
+                                 IBTProjectService projectService, 
+                                 IEmailSender emailService, 
+                                 IBTInviteService inviteService, 
+                                 UserManager<BTUser> userManager,
+                                 IDataProtectionProvider dataProtectionProvider)
         {
             _context = context;
+            _projectService = projectService;
+            _emailService = emailService;
+            _inviteService = inviteService;
+            _userManager = userManager;
+            _protector = dataProtectionProvider.CreateProtector("JH.CF.ShadowTracker.2021!");
         }
 
         // GET: Invites
@@ -51,12 +71,11 @@ namespace ShadowTracker.Controllers
         }
 
         // GET: Invites/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
-            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId), "Id", "Name");
             return View();
         }
 
@@ -65,19 +84,71 @@ namespace ShadowTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,InviteDate,JoinDate,CompanyToken,CompanyId,ProjectId,InvitorId,InviteeId,InviteeEmail,InviteeFirstName,InviteeLastName,Message,IsValid")] Invite invite)
+        public async Task<IActionResult> Create([Bind("Id,ProjectId,InviteeEmail,InviteeFirstName,InviteeLastName,Message")] Invite invite)
         {
+            int companyId = User.Identity.GetCompanyId().Value;
+
             if (ModelState.IsValid)
             {
-                _context.Add(invite);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                Guid guid = Guid.NewGuid();
+
+                string token = _protector.Protect(guid.ToString());
+                string email = _protector.Protect(invite.InviteeEmail);
+                string company = _protector.Protect(companyId.ToString());
+
+                string callbackUrl = Url.Action("ProcessInvite", "Invites", new { token, email, company }, protocol: Request.Scheme);
+               
+                string body = $@"{invite.Message} <br />
+                  Please join my Company. <br />
+                  Click the following link to join our team. <br />
+                  <a href=""{callbackUrl}"">COLLABORATE</a>";
+
+                string destination = invite.InviteeEmail;
+                string subject = "The Shadow Tracker Company Invite";
+
+                await _emailService.SendEmailAsync(destination, subject, body);
+
+                // Create record in the Invites table
+                invite.CompanyToken = guid;
+                invite.CompanyId = companyId;
+                invite.InviteDate = DateTimeOffset.Now;
+                invite.InvitorId = _userManager.GetUserId(User);
+                invite.IsValid = true;
+
+                await _inviteService.AddNewInviteAsync(invite);
+
+                return RedirectToAction("Dashboard", "Home", new { swalMessage = "Invite Sent!" });
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyId);
-            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeId);
-            ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id", invite.InvitorId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
+
+            ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId), "Id", "Name");
             return View(invite);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> ProcessInvite(string token, string email, string company)
+        {
+            if (token == null)
+            {
+                return NotFound();
+            }
+            Guid companyToken = Guid.Parse(_protector.Unprotect(token));
+            string inviteeEmail = _protector.Unprotect(email);
+            int companyId = int.Parse(_protector.Unprotect(company));
+
+            try
+            {
+                Invite invite = await _inviteService.GetInviteAsync(companyToken, inviteeEmail, companyId);
+                if (invite != null)
+                {
+                    return View(invite);
+                }
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // GET: Invites/Edit/5

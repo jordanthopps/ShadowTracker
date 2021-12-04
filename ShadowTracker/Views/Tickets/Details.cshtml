@@ -125,7 +125,7 @@
                                                         <small class="float-right">@comment.Created.ToString("MM.dd.yyyy h:ss tt")</small>:
                                                     </span>
                                                 </div>
-                                                <span class="message text-primary">@Html.Raw(comment.Comment)</span>
+                                                <span class="message text-dark">@Html.Raw(comment.Comment)</span>
                                             </div>
                                         </li>
                                     }
@@ -150,7 +150,6 @@
                                 <div class="row clearfix">
                                     <div>
                                         <form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
-                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <input type="hidden" asp-for="@Model.Id" name="TicketId">
                                             <div class="media-body ml-3">
                                                 <label>
@@ -235,3 +234,28 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+    @* WYSIWYG Start *@
+    <script src="https://cdn.ckeditor.com/ckeditor5/31.0.0/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/31.0.0/inline/ckeditor.js"></script>
+
+
+    <script>
+        InlineEditor
+            .create(document.querySelector('#inlineEditor'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#classicEditor'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
+    @* WYSIWYG End *@
+}
