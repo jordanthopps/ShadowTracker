@@ -28,6 +28,7 @@ namespace ShadowTracker.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly IBTProjectService _projectService;
         private readonly IBTInviteService _inviteService;
+
         public RegisterByInviteModel(
             UserManager<BTUser> userManager,
             SignInManager<BTUser> signInManager,

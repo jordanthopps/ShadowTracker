@@ -46,16 +46,17 @@ namespace ShadowTracker
             //Custom Services
             services.AddScoped<IBTRolesService, BTRolesService>();
             services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
+            services.AddScoped<IBTInviteService, BTInviteService>();
             services.AddScoped<IBTProjectService, BTProjectService>();
             services.AddScoped<IBTTicketService, BTTicketService>();
             services.AddScoped<IBTLookupService, BTLookupService> ();
             services.AddScoped<IBTFileService, BTFileService>();
             services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
-            services.AddScoped<IBTInviteService, BTInviteService>();
-            services.AddControllersWithViews();
             
             services.AddScoped<IEmailSender, BTEmailService>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
