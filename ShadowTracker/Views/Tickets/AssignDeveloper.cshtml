@@ -1,4 +1,14 @@
 ﻿@model ShadowTracker.Models.ViewModels.AssignDeveloperViewModel
+@using ShadowTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@using ShadowTracker.Extensions;
+
+@inject UserManager<BTUser> UserManager
+@inject IBTProjectService ProjectService
+
+@{
+    ViewData["Title"] = "AssignDevelopers";
+}
 
 <div class="container">
     <h2>Assign Developer for</h2>
@@ -28,7 +38,7 @@
             </div>
         </div>
     </div>
-    <div>
-        <a asp-action="UnassignedTickets" asp-controller="Tickets">Unassigned Tickets</a>
-    </div>
+        <div>
+            <a asp-action="Details" asp-controller="Projects" asp-route-id="@Model.Ticket.ProjectId">Back to Project</a>
+        </div>
 </div>

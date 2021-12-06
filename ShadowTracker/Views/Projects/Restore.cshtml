@@ -1,14 +1,14 @@
 ﻿@model ShadowTracker.Models.Project
 
 @{
-    ViewData["Title"] = "Archive";
+    ViewData["Title"] = "Restore";
 }
 
-<h1>Archive</h1>
+<h1>Restore</h1>
 
-<h3>Are you sure you want to archive this project?</h3>
+<h3>You are about to restore this project.</h3>
 <div>
-    <h4>Project</h4>
+    <h4>Project Details</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -79,9 +79,9 @@
         </dd class>
     </dl>
     
-    <form asp-action="Archive">
+    <form asp-action="Restore">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Archive" class="btn btn-danger" /> |
+        <input type="submit" value="Restore" class="btn btn-success" /> |
         <a asp-action="AllProjects">Back to List</a>
     </form>
 </div>

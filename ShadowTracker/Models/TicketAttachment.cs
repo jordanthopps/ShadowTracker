@@ -35,7 +35,7 @@ namespace ShadowTracker.Models
         [NotMapped]
         [DisplayName("Select a file")]
         [DataType(DataType.Upload)]
-        [MaxFileSize(1024 * 1024)]
+        //[MaxFileSize(1024 * 1024)]
         [AllowedExtensions(new string[] { ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx", ".pdf" })]
         public IFormFile ImageFormFile { get; set; }
 

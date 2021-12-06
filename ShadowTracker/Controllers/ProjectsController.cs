@@ -64,7 +64,7 @@ namespace ShadowTracker.Controllers
         {
             int companyId = User.Identity.GetCompanyId().Value;
 
-            List<Project> model = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+            List<Project> model = await _projectService.GetArchivedProjectsByCompanyAsync(companyId);
 
             return View(model);
         }
@@ -109,7 +109,7 @@ namespace ShadowTracker.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles="Project,ProjectManager")]
+        [Authorize(Roles="Admin, ProjectManager")]
         public async Task<IActionResult> AssignMembers(int projectId)
         {
             ProjectMembersViewModel model = new();
@@ -129,7 +129,7 @@ namespace ShadowTracker.Controllers
             return View(model);
         }
 
-        [Authorize("Admin,ProjectManager")]
+        [Authorize(Roles="Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
@@ -220,7 +220,7 @@ namespace ShadowTracker.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(AllProjects));
                 }
                 catch (Exception)
                 {
@@ -228,7 +228,6 @@ namespace ShadowTracker.Controllers
                     throw;
                 }
 
-                return RedirectToAction(nameof(Index));
             }
 
             ViewData["ProjectPriorityId"] = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Id", model.Project.ProjectPriorityId);
@@ -347,6 +346,39 @@ namespace ShadowTracker.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
 
             return (await _projectService.GetAllProjectsByCompanyAsync(companyId)).Any(p => p.Id == id);
+        }
+        
+        // GET: Projects/Restore/5
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity.GetCompanyId().Value;
+            Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return View(project);
+        }
+
+        // POST: Projects/Restore/5 
+        [HttpPost, ActionName("Restore")] //Annotated action name b/c the method name below does not match the name of the associated view.
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirm(int id)
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+            Project project = await _projectService.GetProjectByIdAsync(id, companyId);
+
+            project.Archived = false;
+
+            await _projectService.RestoreProjectAsync(project);
+            return RedirectToAction(nameof(AllProjects));
         }
     }
 }

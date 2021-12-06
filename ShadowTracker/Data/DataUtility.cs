@@ -128,10 +128,10 @@ namespace ShadowTracker.Data
         {
             var defaultUser = new BTUser
             {
-                UserName = "TotoCotoadmin1@bugtracker.com",
-                Email = "TotoCotoadmin1@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "AdeleCotopaxi1@bugtracker.com",
+                Email = "AdeleCotopaxi1@bugtracker.com",
+                FirstName = "Adele",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -159,10 +159,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoadmin2@bugtracker.com",
-                Email = "TotoCotoadmin2@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "AdamCotopaxi2@bugtracker.com",
+                Email = "AdamCotopaxi2@bugtracker.com",
+                FirstName = "Adam",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };
@@ -185,10 +185,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoPM1@bugtracker.com",
-                Email = "TotoCotoPM1@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "PoppyCotopaxi1@bugtracker.com",
+                Email = "PoppyCotopaxi1@bugtracker.com",
+                FirstName = "Poppy",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -211,10 +211,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoPM2@bugtracker.com",
-                Email = "TotoCotoPM2@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "PrattCotopaxi2@bugtracker.com",
+                Email = "PrattCotopaxi2@bugtracker.com",
+                FirstName = "Pratt",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };
@@ -237,10 +237,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoDev1@bugtracker.com",
-                Email = "TotoCotoDev1@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "DevinCotopaxi1@bugtracker.com",
+                Email = "DevinCotopaxi1@bugtracker.com",
+                FirstName = "Devin",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -263,10 +263,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoDev2@bugtracker.com",
-                Email = "TotoCotoDev2@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "DevCotopaxi2@bugtracker.com",
+                Email = "DevCotopaxi2@bugtracker.com",
+                FirstName = "Dev",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -289,10 +289,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoDev3@bugtracker.com",
-                Email = "TotoCotoDev3@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "DevoCotopaxi3@bugtracker.com",
+                Email = "DevoCotopaxi3@bugtracker.com",
+                FirstName = "Devo",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -315,10 +315,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoDev4@bugtracker.com",
-                Email = "TotoCotoDev4@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "DrakeCotopaxi4@bugtracker.com",
+                Email = "DrakeCotopaxi4@bugtracker.com",
+                FirstName = "Drake",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };
@@ -341,10 +341,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoDev5@bugtracker.com",
-                Email = "TotoCotoDev5@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "DreyfusCotopaxi5@bugtracker.com",
+                Email = "DreyfusCotopaxi5@bugtracker.com",
+                FirstName = "Dreyfus",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };
@@ -367,10 +367,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoDev6@bugtracker.com",
-                Email = "TotoCotoDev6@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "DrenCotopaxi6@bugtracker.com",
+                Email = "DrenCotopaxi6@bugtracker.com",
+                FirstName = "Dren",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };
@@ -393,10 +393,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoSub1@bugtracker.com",
-                Email = "TotoCotoSub1@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "SabrinaCotopaxi1@bugtracker.com",
+                Email = "SabrinaCotopaxi1@bugtracker.com",
+                FirstName = "Sabrina",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -419,10 +419,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoSub2@bugtracker.com",
-                Email = "TotoCotoSub2@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "SameCotopaxi2@bugtracker.com",
+                Email = "SamCotopaxi2@bugtracker.com",
+                FirstName = "Sam",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -445,10 +445,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoSub3@bugtracker.com",
-                Email = "TotoCotoSub3@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "SpinnerCotopaxi3@bugtracker.com",
+                Email = "SpinnerCotopaxi3@bugtracker.com",
+                FirstName = "Spinner",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -471,10 +471,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoSub4@bugtracker.com",
-                Email = "TotoCotoSub4@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "ShellyCotopaxi4@bugtracker.com",
+                Email = "ShellyCotopaxi4@bugtracker.com",
+                FirstName = "Shelly",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };
@@ -497,10 +497,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoSub5@bugtracker.com",
-                Email = "TotoCotoSub5@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "SeanCotopaxi5@bugtracker.com",
+                Email = "SeanCotopaxi5@bugtracker.com",
+                FirstName = "Sean",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };
@@ -523,10 +523,10 @@ namespace ShadowTracker.Data
 
             defaultUser = new BTUser
             {
-                UserName = "TotoCotoSub6@bugtracker.com",
-                Email = "TotoCotoSub6@bugtracker.com",
-                FirstName = "Toto",
-                LastName = "Coto",
+                UserName = "SherryCotopaxi6@bugtracker.com",
+                Email = "SherryCotopaxi6@bugtracker.com",
+                FirstName = "Sherry",
+                LastName = "Cotopaxi",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };

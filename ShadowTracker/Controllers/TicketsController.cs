@@ -27,13 +27,14 @@ namespace ShadowTracker.Controllers
         private readonly IBTFileService _fileService;
         private readonly IBTTicketHistoryService _ticketHistoryService;
 
-        public TicketsController(UserManager<BTUser> userManager, IBTTicketService ticketService, IBTLookupService lookupService, IBTProjectService projectService, IBTTicketHistoryService ticketHistoryService)
+        public TicketsController(UserManager<BTUser> userManager, IBTTicketService ticketService, IBTLookupService lookupService, IBTProjectService projectService, IBTTicketHistoryService ticketHistoryService, IBTFileService fileService)
         {
             _userManager = userManager;
             _ticketService = ticketService;
             _lookupService = lookupService;
             _projectService = projectService;
             _ticketHistoryService = ticketHistoryService;
+            _fileService = fileService;
         }
 
         // GET: Tickets
@@ -71,6 +72,16 @@ namespace ShadowTracker.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
 
             List<Ticket> model = await _ticketService.GetArchivedTicketsAsync(companyId);
+            return View(model);
+        }
+
+        //GET: Unassigned Tickets
+        public async Task<IActionResult> UnassignedTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Ticket> model = await _ticketService.GetUnassignedTicketsAsync(companyId);
+
             return View(model);
         }
 
@@ -118,7 +129,7 @@ namespace ShadowTracker.Controllers
 
                 //Add Ticket Notification
 
-                return RedirectToAction(nameof(Details), new { id = model.DeveloperId });
+                return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
 
             }
 
@@ -381,7 +392,7 @@ namespace ShadowTracker.Controllers
             return View(ticket);
         }
 
-        // POST: Tickets/Delete/5
+        // POST: Tickets/Archive/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -398,5 +409,42 @@ namespace ShadowTracker.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
             return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
         }
+
+        // GET: Tickets/Restore/5
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            return View(ticket);
+        }
+
+        // POST: Tickets/Restore/5
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
+            ticket.Archived = false;
+            await _ticketService.UpdateTicketAsync(ticket);
+
+            return RedirectToAction(nameof(AllTickets));
+        }
+
+        //private async Task<bool> TicketExists(int id)
+        //{
+        //    int companyId = User.Identity.GetCompanyId().Value;
+        //    return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
+        //}
+
     }
 }
