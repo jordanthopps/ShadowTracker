@@ -40,15 +40,16 @@ namespace ShadowTracker.Controllers
         }
 
         // GET: Tickets
-        public async Task<IActionResult> Index()
-        {
-            int companyId = User.Identity.GetCompanyId().Value;
+        //public async Task<IActionResult> Index()
+        //{
+        //    int companyId = User.Identity.GetCompanyId().Value;
 
-            List<Ticket> model = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
-            return View(model);
-        }
+        //    List<Ticket> model = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+        //    return View(model);
+        //}
 
         // GET: My Tickets
+
         public async Task<IActionResult> MyTickets()
         {
             string userId = _userManager.GetUserId(User);
