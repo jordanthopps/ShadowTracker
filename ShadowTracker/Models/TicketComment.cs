@@ -21,7 +21,6 @@ namespace ShadowTracker.Models
         [DisplayName("Ticket")]
         public int TicketId { get; set; }
 
-        [Required]
         [DisplayName("Team Member")]
         public string UserId { get; set; }
 
