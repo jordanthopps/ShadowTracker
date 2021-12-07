@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace ShadowTracker.Models.Enums
 {
-    public enum BTNotificationTypes
+    public enum BTNotificationType
     {
-        
+        Project,
+        Ticket
     }
 }

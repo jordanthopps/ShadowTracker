@@ -21,6 +21,16 @@ namespace ShadowTracker.Controllers
         public IActionResult Index()
         {
             return View();
+        } 
+        
+        public IActionResult Landing()
+        {
+            return View();
+        } 
+        
+        public IActionResult Dashboard()
+        {
+            return View();
         }
 
         public IActionResult Privacy()

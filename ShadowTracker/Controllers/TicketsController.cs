@@ -26,8 +26,9 @@ namespace ShadowTracker.Controllers
         private readonly IBTProjectService _projectService;
         private readonly IBTFileService _fileService;
         private readonly IBTTicketHistoryService _ticketHistoryService;
+        private readonly IBTNotificationService _notificationService;
 
-        public TicketsController(UserManager<BTUser> userManager, IBTTicketService ticketService, IBTLookupService lookupService, IBTProjectService projectService, IBTTicketHistoryService ticketHistoryService, IBTFileService fileService)
+        public TicketsController(UserManager<BTUser> userManager, IBTTicketService ticketService, IBTLookupService lookupService, IBTProjectService projectService, IBTTicketHistoryService ticketHistoryService, IBTFileService fileService, IBTNotificationService notificationService)
         {
             _userManager = userManager;
             _ticketService = ticketService;
@@ -35,6 +36,7 @@ namespace ShadowTracker.Controllers
             _projectService = projectService;
             _ticketHistoryService = ticketHistoryService;
             _fileService = fileService;
+            _notificationService = notificationService;
         }
 
         // GET: Tickets
@@ -108,6 +110,7 @@ namespace ShadowTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
         {
+            BTUser btUser = await _userManager.GetUserAsync(User);
             if (model.DeveloperId != null)
             {
 
@@ -128,6 +131,19 @@ namespace ShadowTracker.Controllers
                 await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, userId);
 
                 //Add Ticket Notification
+                Notification notification = new()
+                {
+                    TicketId = model.Ticket.Id,
+                    NotificationTypeId = (await _lookupService.LookupNotificationTypeId(nameof(BTNotificationType.Ticket))).Value, 
+                    Title = "Ticket Assigned",
+                    Message = $"Titcket : {model.Ticket.Title}, was assigned by {btUser.FullName}",
+                    SenderId = userId,
+                    RecipientId = model.Ticket.DeveloperUserId
+                };
+
+
+                await _notificationService.AddNotificationAsync(notification);
+                await _notificationService.SendEmailNotificationAsync(notification, "Ticket Assigned");
 
                 return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
 
@@ -185,6 +201,7 @@ namespace ShadowTracker.Controllers
         {
             string userId = _userManager.GetUserId(User);
             int companyId = User.Identity.GetCompanyId().Value;
+            BTUser btUser = await _userManager.GetUserAsync(User);
 
 
             if (ModelState.IsValid)
@@ -203,6 +220,30 @@ namespace ShadowTracker.Controllers
                     await _ticketHistoryService.AddHistoryAsync(null, newTicket, userId);
 
                     //TODO: Ticket Notification
+                    BTUser projectManager = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
+
+                    Notification notification = new()
+                    {
+                        NotificationTypeId = (await _lookupService.LookupNotificationTypeId(nameof(BTNotificationType.Ticket))).Value,
+                        TicketId = ticket.Id,
+                        Title = "New Ticket Added",
+                        Message = $"New Ticket; {ticket.Title}, was created by {btUser.FullName}",
+                        Created = DateTimeOffset.Now,
+                        SenderId = userId,
+                        RecipientId = projectManager?.Id
+                    };
+
+
+                    await _notificationService.AddNotificationAsync(notification);
+                    if(projectManager != null)
+                    {
+                        await _notificationService.SendEmailNotificationAsync(notification, $"New Ticket Added For Project: {newTicket.Project.Name}");
+                    }
+                    else
+                    {
+                        await _notificationService.SendEmailNotificationsByRoleAsync(notification, companyId, nameof(BTRoles.Admin));
+                    }
+
 
                 }
                 catch (Exception)

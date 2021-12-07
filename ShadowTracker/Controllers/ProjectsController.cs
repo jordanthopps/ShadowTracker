@@ -24,14 +24,16 @@ namespace ShadowTracker.Controllers
         private readonly IBTRolesService _rolesService;
         private readonly IBTLookupService _lookupService;
         private readonly IBTFileService _fileService;
+        private readonly IBTNotificationService _notificationService;
 
-        public ProjectsController( UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService)
+        public ProjectsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService, IBTNotificationService notificationService)
         {
             _userManager = userManager;
             _projectService = projectService;
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
+            _notificationService = notificationService;
         }
 
 
@@ -198,6 +200,7 @@ namespace ShadowTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
+            BTUser btUser = await _userManager.GetUserAsync(User);
             if (model != null)
             {
                 int companyId = User.Identity.GetCompanyId().Value;
@@ -219,6 +222,19 @@ namespace ShadowTracker.Controllers
                     {
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
+
+                    //Save/Send Notification
+                    Notification notification = new()
+                    {
+                        ProjectId = model.Project.Id,
+                        NotificationTypeId = (await _lookupService.LookupNotificationTypeId(nameof(BTNotificationType.Ticket))).Value, //TODO: Remove this method from Notification service and add it to lookupService
+                        Title = "Project Created",
+                        Message = $"Project : {model.Project.Name}, was assigned by {btUser.FullName}",
+                        SenderId = btUser.Id
+                    };
+
+                    await _notificationService.AddNotificationAsync(notification);
+                    await _notificationService.SendEmailNotificationsByRoleAsync(notification, companyId, nameof(BTRoles.Admin));
 
                     return RedirectToAction(nameof(AllProjects));
                 }
