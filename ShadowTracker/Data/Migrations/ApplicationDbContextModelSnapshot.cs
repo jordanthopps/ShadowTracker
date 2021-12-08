@@ -560,7 +560,6 @@ namespace ShadowTracker.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -939,9 +938,7 @@ namespace ShadowTracker.Data.Migrations
 
                     b.HasOne("ShadowTracker.Models.BTUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Ticket");
 

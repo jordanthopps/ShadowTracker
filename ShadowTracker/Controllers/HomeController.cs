@@ -38,6 +38,7 @@ namespace ShadowTracker.Controllers
             return View();
         }
 
+
         public async Task<IActionResult> Dashboard(string swalMessage = null)
         {
             ViewData["SwalMessage"] = swalMessage;
@@ -51,10 +52,15 @@ namespace ShadowTracker.Controllers
             model.Members = await _companyInfoService.GetAllMembersAsync(companyId);
 
 
-            return View();
+            return View(model);
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+        
+        public IActionResult Modal()
         {
             return View();
         }
