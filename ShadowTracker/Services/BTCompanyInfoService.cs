@@ -37,19 +37,20 @@ namespace ShadowTracker.Services
         }
 
         //Get Company Info By Id
-        public Task<Company> GetCompanyInfoByIdAsync(int? companyId)
+        public async Task<Company> GetCompanyInfoByIdAsync(int? companyId)
         {
             Company result = new();
             try
             {
                 if(companyId == null)
                 {
-                    result = _context.Companies
+                    result = await _context.Companies
                                      .Include(c => c.Members)
                                      .Include(c => c.Projects)
                                      .Include(c => c.Invites)
                                      .FirstOrDefaultAsync(c => c.Id == companyId);
                 }
+                return result;
             }
             catch (Exception)
             {
@@ -100,9 +101,24 @@ namespace ShadowTracker.Services
         }
 
         //Get Tickets
-        public Task<List<Ticket>> GetAllTicketsAsync(int? companyId)
+        public async Task<List<Ticket>> GetAllTicketsAsync(int? companyId)
         {
-            throw new NotImplementedException();
+            List<Ticket> result = new();
+            List<Project> projects = new();
+
+            try
+            {
+                projects = await GetAllProjectsAsync(companyId);
+
+                result = projects.SelectMany(p => p.Tickets).ToList();
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
