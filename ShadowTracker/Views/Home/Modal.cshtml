@@ -1,7 +1,22 @@
-﻿<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+﻿@{
+    Layout = null;
+}
+
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+<link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/plugins.css" rel="stylesheet" type="text/css" />
+<!-- END GLOBAL MANDATORY STYLES -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<link href="/plugins/animate/animate.css" rel="stylesheet" type="text/css" />
+<!-- END PAGE LEVEL PLUGINS -->
+<!--  BEGIN CUSTOM STYLE FILE  -->
+<link href="/assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/components/custom-modal.css" rel="stylesheet" type="text/css" />
+<!--  END CUSTOM STYLE FILE  -->
 
 
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
     Launch demo modal
 </button>
 <!-- Modal -->
@@ -24,3 +39,22 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <script src="/assets/js/libs/jquery-3.1.1.min.js"></script>
+    <script src="/bootstrap/js/popper.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="/assets/js/app.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            App.init();
+        });
+    </script>
+    <script src="/assets/js/custom.js"></script>
+    <!-- END GLOBAL MANDATORY STYLES -->
+
+}

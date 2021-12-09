@@ -1,0 +1,35 @@
+﻿.landing-right {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    position: fixed;
+    right: 0;
+    min-height: auto;
+    height: 100vh;
+    width: 25%;
+}
+
+    .landing-right .l-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url(/assets/img/mindset.svg);
+        background-color: #0e1726;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position-x: center;
+        background-position-y: center;
+    }
+
+        .landing-right .l-image .img-content {
+            display: flex;
+            justify-content: center;
+            height: 100%;
+        }

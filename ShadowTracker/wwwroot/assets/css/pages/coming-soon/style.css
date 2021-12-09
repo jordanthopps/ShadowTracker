@@ -22,11 +22,13 @@ body {
   display: flex; }
 
 .coming-soon-cont {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  height: 100vh; }
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    height: unset; /*changed by developer*/
+    align-items: center;
+}
   .coming-soon-cont .coming-soon-wrap {
     max-width: 480px;
     margin: 0 auto;
@@ -171,6 +173,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    background-image: src();
     background-color: #0e1726;
     background-position: center center;
     background-repeat: no-repeat;
