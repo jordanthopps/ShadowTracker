@@ -74,7 +74,7 @@ namespace ShadowTracker.Data
             await SeedTicketStatusesAsync(dbContextSvc);
             await SeedTicketPrioritiesAsync(dbContextSvc);
             await SeedTicketTypesAsync(dbContextSvc);
-            //await SeedNotificationTypes(dbContextSvc);
+            await SeedNotificationTypes(dbContextSvc);
             await SeedProjectsAsync(dbContextSvc);
             await SeedTicketsAsync(dbContextSvc);
 
@@ -821,10 +821,32 @@ namespace ShadowTracker.Data
             }
         }
 
-        //private static async Task SeedNotificationTypes(ApplicationDbContext dbContextSvc)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        private static async Task SeedNotificationTypes(ApplicationDbContext dbContextSvc)
+        {
+            try
+            {
+                IList<NotificationType> notificationTypes = new List<NotificationType>()
+                {
+                    new NotificationType() { Name = BTNotificationType.Project.ToString() },
+                    new NotificationType() { Name = BTNotificationType.Ticket.ToString() },
+                };
+
+                var dbNotificationTypes = dbContextSvc.NotificationTypes.Select(c => c.Name).ToList();
+
+                await dbContextSvc.NotificationTypes.AddRangeAsync(notificationTypes.Where(c => !dbNotificationTypes.Contains(c.Name)));
+
+                await dbContextSvc.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("******** ERROR ********");
+                Console.WriteLine("Error Seeding Notification Types");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("***********************");
+                throw;
+            }
+        }
 
         private static async Task SeedProjectsAsync(ApplicationDbContext dbContextSvc)
         {

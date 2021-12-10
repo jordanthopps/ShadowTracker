@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ShadowTracker.Extensions;
 using ShadowTracker.Models;
@@ -15,6 +16,7 @@ using static ShadowTracker.Models.ChartModels.AMChartData;
 
 namespace ShadowTracker.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
