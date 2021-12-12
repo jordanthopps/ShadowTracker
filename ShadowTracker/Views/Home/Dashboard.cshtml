@@ -5,7 +5,7 @@
 @using System.Linq
 
 @inject UserManager<BTUser> UserManager
-@inject IBTRolesService RoleService
+@inject IBTRolesService RolesService
 
 @{
     ViewData["Title"] = "Dashboard";
@@ -184,6 +184,35 @@
                     </div>
                     <div class="card-body">
                         @* [Copy and format table from Unassigned Tickets] *@
+                        <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                            <table class="table table-hover">
+                                <thead class="">
+                                    <tr>
+                                        @* Table header *@
+                                        <th>Name</th>
+                                        <th>StartDate</th>
+                                        <th>EndDate</th>
+                                        <th>Priority</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @* Table body *@
+                                    @foreach (var project in Model.Projects.OrderByDescending(d => d.Created))
+                                    {
+                                        <tr>
+                                            <td><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color:black"><strong>@project.Name</strong></a></td>
+                                            <td><span style="font-size:small">@project.StartDate.Value.ToString("MM.dd.yyyy")</span></td>
+                                            <td><span style="font-size:small">@project.EndDate.Value.ToString("MM.dd.yyyy")</span></td>
+                                            <td><span class="badge bg-dark">@project.ProjectPriority?.Name</span></td>
+                                            <td>
+                                                <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id"></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="card-footer">
                     </div>
@@ -265,12 +294,21 @@
                     </div>
                     <div class="card-body" style="overflow-y:auto;height:600px;background-color:antiquewhite">
                         @* Looop over Company members. Display Name and Role *@
+                        @foreach (BTUser member in Model.Members)
+                        {
+                            <div class="">
+
+                                <span style="font-weight:bold">@member.FullName</span>
+                                <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
+
+                            </div>
+                            <hr />
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 @section scripts{

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using ShadowTracker.Data;
 using ShadowTracker.Models;
+using ShadowTracker.Models.Enums;
 
 namespace ShadowTracker.Areas.Identity.Pages.Account
 {
@@ -114,7 +115,7 @@ namespace ShadowTracker.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
+                    await _userManager.AddToRoleAsync(user, nameof(BTRoles.Admin));
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
