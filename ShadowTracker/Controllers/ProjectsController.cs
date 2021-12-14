@@ -227,7 +227,7 @@ namespace ShadowTracker.Controllers
                     Notification notification = new()
                     {
                         ProjectId = model.Project.Id,
-                        NotificationTypeId = (await _lookupService.LookupNotificationTypeId(nameof(BTNotificationType.Ticket))).Value, //TODO: Remove this method from Notification service and add it to lookupService
+                        NotificationTypeId = (await _lookupService.LookupNotificationTypeId(nameof(BTNotificationType.Ticket))).Value,
                         Title = "Project Created",
                         Message = $"Project : {model.Project.Name}, was assigned by {btUser.FullName}",
                         SenderId = btUser.Id

@@ -92,7 +92,7 @@ namespace ShadowTracker.Controllers
         [HttpGet]
         public async Task<IActionResult> AssignDeveloper(int? ticketId)
         {
-                if(ticketId == null)
+                if (ticketId == null)
                 {
                     return NotFound();
                 }    
@@ -215,11 +215,11 @@ namespace ShadowTracker.Controllers
 
                     await _ticketService.AddNewTicketAsync(ticket);
 
-                    //TODO: Ticket History 
+                    //Ticket History 
                     Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _ticketHistoryService.AddHistoryAsync(null, newTicket, userId);
 
-                    //TODO: Ticket Notification
+                    //Ticket Notification
                     BTUser projectManager = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
 
                     Notification notification = new()
