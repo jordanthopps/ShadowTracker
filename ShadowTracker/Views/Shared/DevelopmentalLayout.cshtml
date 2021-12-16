@@ -145,9 +145,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="dropdown-item">
                                 <partial name="_LoginPartial" />
-                            </div>
                             @*<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>*@
 
                         </div>
@@ -159,158 +157,161 @@
         <!--  END NAVBAR  -->
     }
     <!--  BEGIN MAIN CONTAINER  -->
-    <div class="main-container sidebar-closed sbar-open" id="container">
+<div class="main-container sidebar-closed sbar-open" id="container">
 
-        <div class="overlay"></div>
-        <div class="search-overlay"></div>
+    <div class="overlay"></div>
+    <div class="search-overlay"></div>
 
+    @if (SignInManager.IsSignedIn(User))
+    {
         <!--  BEGIN SIDEBAR  -->
-        <div class="sidebar-wrapper sidebar-theme">
+    <div class="sidebar-wrapper sidebar-theme">
 
-            <nav id="sidebar">
+        <nav id="sidebar">
 
-                <ul class="navbar-nav theme-brand flex-row  text-center">
-                    <li class="nav-item theme-text">
-                        <a href="index.html" class="nav-link"> Quick Nav </a>
-                    </li>
-                </ul>
-
-               
-
-
-                <ul class="list-unstyled menu-categories" id="accordionExample">
-                    @*Dashboard Sidemenu Start*@
-                    <li class="menu">
-                        <a href="#dashboard" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                                <span>Dashboard</span>
-                            </div>
-                            <div>
-                                @*<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>*@
-                            </div>
-                        </a>
-                        <ul class="collapse recent-submenu mini-recent-submenu list-unstyled show" id="dashboard" data-parent="#accordionExample">
-                        </ul>
-                    </li>
-                    @*Dashboard Sidemenu End*@
+            <ul class="navbar-nav theme-brand flex-row  text-center">
+                <li class="nav-item theme-text">
+                    <a href="index.html" class="nav-link"> Quick Nav </a>
+                </li>
+            </ul>
 
 
 
-                    @*Company Sidemenu Start*@ @*TODO: update the listed items of Company*@
-                    <li class="menu">
-                        <a href="#invoice" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                                <span>Company</span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="invoice" data-parent="#accordionExample">
-                            <li>
-                                <a href="apps_invoice-list.html"> Item 1 </a>
-                            </li>
-                            <li>
-                                <a href="apps_invoice-preview.html"> Item 2 </a>
-                            </li>
-                            <li>
-                                <a href="apps_invoice-add.html"> Item 3 </a>
-                            </li>
-                            <li>
-                                <a href="apps_invoice-edit.html"> Item 4 </a>
-                            </li>
-                        </ul>
-                    </li>
-                    @*Company Sidemenu End*@
 
-                    @*Projects Sidemenu Start*@
-                    <li class="menu">
-                        <a href="#components" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                                <span>Projects</span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="components" data-parent="#accordionExample">
-                            <li>
-                                <a href="component_accordion.html"> New Project  </a>
-                            </li>
-                            <li>
-                                <a href="component_modal.html"> My Projects </a>
-                            </li>
-                            <li>
-                                <a href="component_cards.html"> All Projects </a>
-                            </li>
-                            <li>
-                                <a href="component_bootstrap_carousel.html">Archived Projects</a>
-                            </li>
-                            <li>
-                                <a href="component_blockui.html">Unassigned Projects</a>
-                            </li>
-                            <li>
-                                <a href="component_countdown.html">Invite</a>
-                            </li>
-                        </ul>
-                    </li>
-                    @*Projects Sidemenu Start*@
+            <ul class="list-unstyled menu-categories" id="accordionExample">
+                @*Dashboard Sidemenu Start*@
+                <li class="menu">
+                    <a href="#dashboard" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                            <span>Dashboard</span>
+                        </div>
+                        <div>
+                            @*<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>*@
+                        </div>
+                    </a>
+                    <ul class="collapse recent-submenu mini-recent-submenu list-unstyled show" id="dashboard" data-parent="#accordionExample">
+                    </ul>
+                </li>
+                @*Dashboard Sidemenu End*@
 
-                    @*Tickets Sidemenu Start*@
-                    <li class="menu">
-                        <a href="#datatables" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                                <span>Tickets</span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="datatables" data-parent="#accordionExample">
-                            <li>
-                                <a href="table_dt_basic.html"> New Ticket </a>
-                            </li>
-                            <li>
-                                <a href="table_dt_striped_table.html"> My Tickets </a>
-                            </li>
-                            <li>
-                                <a href="table_dt_ordering_sorting.html"> All Tickets </a>
-                            </li>
-                            <li>
-                                <a href="table_dt_multi-column_ordering.html"> Archived Tickets </a>
-                            </li>
-                            <li>
-                                <a href="table_dt_multiple_tables.html"> Unassigned Tickets </a>
-                            </li>
-                        </ul>
-                    </li>
-                    @*Tickets Sidemenu End*@
-                    <br />
-                    <div class="nav-item theme-text">
-                        <partial name="_LoginPartial" /> @*TODO: Fix login services*@
-                    </div>
 
-                </ul>
 
-            </nav>
+                @*Company Sidemenu Start*@ @*TODO: update the listed items of Company*@
+                <li class="menu">
+                    <a href="#invoice" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            <span>Company</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled" id="invoice" data-parent="#accordionExample">
+                        <li>
+                            <a href="apps_invoice-list.html"> Item 1 </a>
+                        </li>
+                        <li>
+                            <a href="apps_invoice-preview.html"> Item 2 </a>
+                        </li>
+                        <li>
+                            <a href="apps_invoice-add.html"> Item 3 </a>
+                        </li>
+                        <li>
+                            <a href="apps_invoice-edit.html"> Item 4 </a>
+                        </li>
+                    </ul>
+                </li>
+                @*Company Sidemenu End*@
 
-        </div>
-        <!--  END SIDEBAR  -->
-        <!--  BEGIN CONTENT AREA  -->
-        <div id="content" class="main-content">
-            <div class="layout-px-spacing">
-                <div class="row layout-top-spacing">
-                    @RenderBody()
+                @*Projects Sidemenu Start*@
+                <li class="menu">
+                    <a href="#components" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                            <span>Projects</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled" id="components" data-parent="#accordionExample">
+                        <li>
+                            <a href="component_accordion.html"> New Project  </a>
+                        </li>
+                        <li>
+                            <a href="component_modal.html"> My Projects </a>
+                        </li>
+                        <li>
+                            <a href="component_cards.html"> All Projects </a>
+                        </li>
+                        <li>
+                            <a href="component_bootstrap_carousel.html">Archived Projects</a>
+                        </li>
+                        <li>
+                            <a href="component_blockui.html">Unassigned Projects</a>
+                        </li>
+                        <li>
+                            <a href="component_countdown.html">Invite</a>
+                        </li>
+                    </ul>
+                </li>
+                @*Projects Sidemenu Start*@
+
+                @*Tickets Sidemenu Start*@
+                <li class="menu">
+                    <a href="#datatables" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                            <span>Tickets</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled" id="datatables" data-parent="#accordionExample">
+                        <li>
+                            <a href="table_dt_basic.html"> New Ticket </a>
+                        </li>
+                        <li>
+                            <a href="table_dt_striped_table.html"> My Tickets </a>
+                        </li>
+                        <li>
+                            <a href="table_dt_ordering_sorting.html"> All Tickets </a>
+                        </li>
+                        <li>
+                            <a href="table_dt_multi-column_ordering.html"> Archived Tickets </a>
+                        </li>
+                        <li>
+                            <a href="table_dt_multiple_tables.html"> Unassigned Tickets </a>
+                        </li>
+                    </ul>
+                </li>
+                @*Tickets Sidemenu End*@
+                <br />
+                <div class="nav-item theme-text">
+                    <partial name="_LoginPartial" /> @*TODO: Fix login services*@
                 </div>
-            </div>
-        </div>
-        <!--  END CONTENT AREA  -->
+
+            </ul>
+
+        </nav>
 
     </div>
+    }
+    <!--  END SIDEBAR  -->
+    <!--  BEGIN CONTENT AREA  -->
+    <div id="content" class="main-content">
+        <div class="layout-px-spacing">
+            <div class="row layout-top-spacing">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <!--  END CONTENT AREA  -->
+
+</div>
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     <script src="/assets/js/libs/jquery-3.1.1.min.js"></script>
     <script src="/bootstrap/js/popper.min.js"></script>

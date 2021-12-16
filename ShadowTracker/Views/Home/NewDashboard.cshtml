@@ -16,11 +16,11 @@
 
 <!-- Styles -->
 <style>
-    .amDark {/*
+    .amDark { /*
         background-color: #30303d;*/
     }
 
-    g > text > tspan{
+    g > text > tspan {
         fill: white
     }
 
@@ -29,6 +29,8 @@
         height: 500px;
     }
 </style>
+<div class="col">
+    <div class="row">
 
 <div class="mb-4 infobox-1 col-xl-4 col-md-4 col-sm-4 col-12 layout-spacing">
     <div class="info-icon">
@@ -53,6 +55,8 @@
     <h5 class="info-heading">Active Projects</h5>
     <h3>@Model.Projects.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</h3>
     <a class="info-link" href="">Insights <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+</div>
+    </div>
 </div>
 
 @*Tickets Table Start*@
@@ -81,47 +85,47 @@
                         @* Table body *@
                         @foreach (var ticket in Model.Tickets.OrderByDescending(d => d.Created))
                         {
-                        <tr>
-                            <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><strong>@ticket.Title</strong></a> </td>
-                            <td>
-                                @if (ticket.DeveloperUserId != null)
+                            <tr>
+                                <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><strong>@ticket.Title</strong></a> </td>
+                                <td>
+                                    @if (ticket.DeveloperUserId != null)
+                                    {
+                                        @ticket.DeveloperUser?.FullName
+                                    }
+                                    else
+                                    {
+                                        if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
+                                        {
+                                            <a class="btn btn-outline-jhprimary btn-rounded" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign</a>
+                                        }
+                                    }
+                                </td>
+                                @if (ticket.TicketStatus.Name == "New")
                                 {
-                                    @ticket.DeveloperUser?.FullName
+                                    <td><span class="badge badge-success">@ticket.TicketStatus.Name </span></td>
+                                }
+                                else if (ticket.TicketStatus.Name == "Development")
+                                {
+                                    <td><span class="badge badge-development">@ticket.TicketStatus.Name </span></td>
                                 }
                                 else
                                 {
-                                    if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
-                                    {
-                                        <a class="btn btn-outline-jhprimary btn-rounded" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign</a>
-                                    }
+                                    <td><span class="badge badge-other">@ticket.TicketStatus.Name </span></td>
                                 }
-                            </td>
-                            @if (ticket.TicketStatus.Name == "New")
-                            {
-                                <td><span class="badge badge-success">@ticket.TicketStatus.Name </span></td>
-                            }
-                            else if (ticket.TicketStatus.Name == "Development")
-                            {
-                                <td><span class="badge badge-development">@ticket.TicketStatus.Name </span></td>
-                            }
-                            else
-                            {
-                                <td><span class="badge badge-other">@ticket.TicketStatus.Name </span></td>
-                            }
-                            @if (ticket.TicketPriority.Name == "Urgent")
-                            {
-                                <td><span class="badge badge-urgent">@ticket.TicketPriority.Name </span></td>
+                                @if (ticket.TicketPriority.Name == "Urgent")
+                                {
+                                    <td><span class="badge badge-urgent">@ticket.TicketPriority.Name </span></td>
 
-                            }
-                            else
-                            {
-                                <td><span class="badge">@ticket.TicketPriority.Name </span></td>
-                            }
-                            <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
-                            <td>
-                                <a class="btn btn-rounded btn-outline-jhprimary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
-                            </td>
-                        </tr>
+                                }
+                                else
+                                {
+                                    <td><span class="badge">@ticket.TicketPriority.Name </span></td>
+                                }
+                                <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
+                                <td>
+                                    <a class="btn btn-rounded btn-outline-jhprimary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -155,23 +159,23 @@
                         @* Table body *@
                         @foreach (var project in Model.Projects.OrderByDescending(d => d.Created))
                         {
-                        <tr>
-                            <td><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color:white"><strong>@project.Name</strong></a></td>
-                            <td><span style="font-size:small">@project.StartDate.Value.ToString("MM.dd.yyyy")</span></td>
-                            <td><span style="font-size:small">@project.EndDate.Value.ToString("MM.dd.yyyy")</span></td>
-                            @if (project.ProjectPriority.Name == "High")
-                            {
-                                <td><span class="badge bg-high">@project.ProjectPriority?.Name</span></td>
-                            }
-                            else
-                            {
-                                <td><span class="badge bg-dark">@project.ProjectPriority?.Name</span></td>
+                            <tr>
+                                <td><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color:white"><strong>@project.Name</strong></a></td>
+                                <td><span style="font-size:small">@project.StartDate.Value.ToString("MM.dd.yyyy")</span></td>
+                                <td><span style="font-size:small">@project.EndDate.Value.ToString("MM.dd.yyyy")</span></td>
+                                @if (project.ProjectPriority.Name == "High")
+                                {
+                                    <td><span class="badge bg-high">@project.ProjectPriority?.Name</span></td>
+                                }
+                                else
+                                {
+                                    <td><span class="badge bg-dark">@project.ProjectPriority?.Name</span></td>
 
-                            }
-                            <td>
-                                <a class="btn btn-rounded btn-outline-jhprimary" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id"></a>
-                            </td>
-                        </tr>
+                                }
+                                <td>
+                                    <a class="btn btn-rounded btn-outline-jhprimary" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id"></a>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
