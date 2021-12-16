@@ -53,6 +53,7 @@ namespace ShadowTracker
             services.AddScoped<IBTFileService, BTFileService>();
             services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
             services.AddScoped<IBTNotificationService, BTNotificationService>();
+            services.AddScoped<SearchService>();
             
             services.AddScoped<IEmailSender, BTEmailService>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
@@ -86,7 +87,7 @@ namespace ShadowTracker
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=NewDashboard}/{id?}");
                 endpoints.MapRazorPages();
             });
         }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ShadowTracker.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace ShadowTracker.Areas.Identity.Pages.Account
 {
@@ -21,14 +22,17 @@ namespace ShadowTracker.Areas.Identity.Pages.Account
         private readonly UserManager<BTUser> _userManager;
         private readonly SignInManager<BTUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IConfiguration _configuration;
 
-        public LoginModel(SignInManager<BTUser> signInManager, 
-            ILogger<LoginModel> logger,
-            UserManager<BTUser> userManager)
+        public LoginModel(SignInManager<BTUser> signInManager,
+                        ILogger<LoginModel> logger,
+                        UserManager<BTUser> userManager, 
+                        IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _configuration = configuration;
         }
 
         [BindProperty]
@@ -72,9 +76,27 @@ namespace ShadowTracker.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null, string demoEmail = null)
         {
             returnUrl ??= Url.Content("~/");
+
+            if (!string.IsNullOrEmpty(demoEmail))
+            {
+                string email = _configuration[demoEmail];
+                string password = _configuration["DemoUserPassword"];
+               
+                var result = await _signInManager.PasswordSignInAsync(email, password, false, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("Demo User logged in.");
+                    return LocalRedirect(returnUrl);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid demo login attempt.");
+                    return Page();
+                }
+            }
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ShadowTracker.Extensions;
 using ShadowTracker.Models;
@@ -15,6 +16,7 @@ using static ShadowTracker.Models.ChartModels.AMChartData;
 
 namespace ShadowTracker.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -40,6 +42,22 @@ namespace ShadowTracker.Controllers
 
 
         public async Task<IActionResult> Dashboard(string swalMessage = null)
+        {
+            ViewData["SwalMessage"] = swalMessage;
+
+            DashboardViewModel model = new();
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            model.Company = await _companyInfoService.GetCompanyInfoByIdAsync(companyId);
+            model.Projects = await _companyInfoService.GetAllProjectsAsync(companyId);
+            model.Tickets = await _companyInfoService.GetAllTicketsAsync(companyId);
+            model.Members = await _companyInfoService.GetAllMembersAsync(companyId);
+
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> NewDashboard(string swalMessage = null)
         {
             ViewData["SwalMessage"] = swalMessage;
 

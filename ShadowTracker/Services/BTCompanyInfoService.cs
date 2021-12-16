@@ -42,7 +42,7 @@ namespace ShadowTracker.Services
             Company result = new();
             try
             {
-                if(companyId == null)
+                if(companyId != null)
                 {
                     result = await _context.Companies
                                      .Include(c => c.Members)

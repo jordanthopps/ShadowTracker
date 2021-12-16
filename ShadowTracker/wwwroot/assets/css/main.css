@@ -12,14 +12,16 @@ html {
   min-height: 100%; }
 
 body {
-  color: #888ea8;
-  height: 100%;
-  font-size: 0.875rem;
-  background: #f1f2f3;
-  overflow-x: hidden;
-  overflow-y: auto;
-  letter-spacing: 0.0312rem;
-  font-family: 'Nunito', sans-serif; }
+    color: #888ea8;
+    height: 100%;
+    font-size: 0.875rem;
+    background: #f1f2f3;
+    overflow-x: hidden;
+    overflow-y: auto;
+    letter-spacing: 0.0312rem;
+    font-family: 'Nunito', sans-serif;
+    text-align: left;
+}
 
 h1, h2, h3, h4, h5, h6 {
   color: #3b3f5c; }
@@ -161,7 +163,7 @@ blockquote.media-object .media .usr-img img {
     letter-spacing: 1px; }
 
 a {
-  color: #e0e6ed;
+  color: #e0e6ed!important;
   outline: none; }
   a:hover {
     color: #bfc9d4;
@@ -192,9 +194,11 @@ span.red {
 
 /*      CARD    */
 .card {
-  border: 1px solid #0e1726;
-  border-radius: 6px;
-  background: #0e1726; }
+    /*border: 1px solid #0e1726;*/
+    border: 1px solid #455164; 
+    border-radius: 6px;
+    background: #0e1726;
+}
 
 /*      Form Group Label       */
 .form-group label, label {
@@ -1260,6 +1264,13 @@ select.form-control.form-custom {
   background-color: transparent;
   box-shadow: none; }
 
+.btn-outline-jhprimary {
+    border: 1px solid #918bff !important;
+    color: #918bff !important;
+    background-color: transparent;
+    box-shadow: none;
+}
+
 .btn-outline-info {
   border: 1px solid #2196f3 !important;
   color: #2196f3 !important;
@@ -1435,13 +1446,31 @@ select.form-control.form-custom {
   color: #fff;
   background-color: #4361ee; }
 
+.badge-development {
+  color: #fff;
+  background-color: #434d5e; }
+
+.badge-other {
+    color: #fff;
+    background-color: #59340f;
+}
+
+.badge-urgent {
+    color: #8f3f35;
+    background-color: unset;
+}
+
 .badge-info {
   color: #fff;
   background-color: #2196f3; }
 
 .badge-success {
-  color: #fff;
-  background-color: #1abc9c; }
+  /*color: #fff;
+  background-color: #1abc9c;*/
+
+  color: #16cb0a;
+  background-color: unset;
+}
 
 .badge-danger {
   color: #fff;
@@ -1912,6 +1941,12 @@ table .badge-success, table .badge-primary, table .badge-warning, table .badge-d
   background-color: #fff;
   border-color: #3b3f5c;
   color: #fff; }
+
+.bg-high {
+    background-color: #8f3f35;
+    border-color: #8f3f35;
+    color: #fff;
+}
 
 /*  
     Light Background  

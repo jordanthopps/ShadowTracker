@@ -39,17 +39,16 @@ namespace ShadowTracker.Controllers
             _notificationService = notificationService;
         }
 
-        // GET: Tickets
-        //public async Task<IActionResult> Index()
+        //// GET: Tickets
+        //public async Task<IActionResult> UnassignedTickets()
         //{
         //    int companyId = User.Identity.GetCompanyId().Value;
 
-        //    List<Ticket> model = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+        //    List<Ticket> model = await _ticketService.GetUnassignedTicketsAsync(companyId);
         //    return View(model);
         //}
 
         // GET: My Tickets
-
         public async Task<IActionResult> MyTickets()
         {
             string userId = _userManager.GetUserId(User);
@@ -93,7 +92,7 @@ namespace ShadowTracker.Controllers
         [HttpGet]
         public async Task<IActionResult> AssignDeveloper(int? ticketId)
         {
-                if(ticketId == null)
+                if (ticketId == null)
                 {
                     return NotFound();
                 }    
@@ -137,9 +136,9 @@ namespace ShadowTracker.Controllers
                     TicketId = model.Ticket.Id,
                     NotificationTypeId = (await _lookupService.LookupNotificationTypeId(nameof(BTNotificationType.Ticket))).Value, 
                     Title = "Ticket Assigned",
-                    Message = $"Titcket : {model.Ticket.Title}, was assigned by {btUser.FullName}",
+                    Message = $"Ticket : {model.Ticket.Title}, was assigned by {btUser.FullName}",
                     SenderId = userId,
-                    RecipientId = model.Ticket.DeveloperUserId
+                    RecipientId = model.DeveloperId
                 };
 
 
@@ -216,11 +215,11 @@ namespace ShadowTracker.Controllers
 
                     await _ticketService.AddNewTicketAsync(ticket);
 
-                    //TODO: Ticket History 
+                    //Ticket History 
                     Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _ticketHistoryService.AddHistoryAsync(null, newTicket, userId);
 
-                    //TODO: Ticket Notification
+                    //Ticket Notification
                     BTUser projectManager = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
 
                     Notification notification = new()
