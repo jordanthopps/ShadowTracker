@@ -25,8 +25,9 @@ namespace ShadowTracker.Controllers
         private readonly IBTLookupService _lookupService;
         private readonly IBTFileService _fileService;
         private readonly IBTNotificationService _notificationService;
+        private readonly BTTicketService _ticketService;
 
-        public ProjectsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService, IBTNotificationService notificationService)
+        public ProjectsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService, IBTNotificationService notificationService, BTTicketService ticketService)
         {
             _userManager = userManager;
             _projectService = projectService;
@@ -34,6 +35,7 @@ namespace ShadowTracker.Controllers
             _lookupService = lookupService;
             _fileService = fileService;
             _notificationService = notificationService;
+            _ticketService = ticketService;
         }
 
 
@@ -354,6 +356,8 @@ namespace ShadowTracker.Controllers
             project.Archived = true;
 
             await _projectService.ArchiveProjectAsync(project);
+
+            
             return RedirectToAction(nameof(AllProjects));
         }
 
