@@ -87,7 +87,7 @@ namespace ShadowTracker
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=NewDashboard}/{id?}");
+                    pattern: "{controller=Home}/{action=Dashboard}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
