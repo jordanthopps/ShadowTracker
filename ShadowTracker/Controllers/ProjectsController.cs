@@ -103,7 +103,7 @@ namespace ShadowTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignPM(AssignPMViewModel model)
         {
-            if(string.IsNullOrEmpty(model.PMId))
+            if(!string.IsNullOrEmpty(model.PMId))
             {
                 await _projectService.AddProjectManagerAsync(model.PMId, model.Project.Id);
                 return RedirectToAction(nameof(Details), new { id = model.Project.Id });

@@ -40,42 +40,71 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Archived)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ArchivedByProject)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Project.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketType.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
-                <a asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i></a>
-                <a asp-action="Archive" asp-route-id="@item.Id"><i class="bi bi-archive"></i></a>
+        @foreach (var item in Model)
+        {
 
-            </td>
-        </tr>
-}
+
+            @if (item.Archived == false)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Archived)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ArchivedByProject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketType.Name)
+                    </td>
+                    @if (item.TicketStatus.Name == "New")
+                    {
+                        <td><span class="badge badge-success">@item.TicketStatus.Name </span></td>
+                    }
+                    else if (item.TicketStatus.Name == "Development")
+                    {
+                        <td><span class="badge badge-development">@item.TicketStatus.Name </span></td>
+                    }
+                    else
+                    {
+                        <td><span class="badge badge-other">@item.TicketStatus.Name </span></td>
+                    }
+                    @if (item.TicketPriority.Name == "Urgent")
+                    {
+                        <td><span class="badge badge-urgent">@item.TicketPriority.Name </span></td>
+
+                    }
+                    else
+                    {
+                        <td><span class="badge">@item.TicketPriority.Name </span></td>
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
+                        <a asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i></a>
+                        @if (item.Archived == false)
+                        {
+                            <a asp-action="Archive" asp-route-id="@item.Id"><i class="bi bi-archive"></i></a>
+
+                        }
+                        @if (item.Archived == true)
+                        {
+                            <a asp-action="Restore" asp-route-id="@item.Id"><i class="bi bi-node-plus"></i></a>
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
     </tbody>
 </table>

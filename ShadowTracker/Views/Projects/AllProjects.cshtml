@@ -10,7 +10,7 @@
         <thead>
             <tr>
                 <th>
-
+                    @Html.DisplayNameFor(model => model.FileData)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Name)
@@ -36,36 +36,38 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>
-                        @if (item.FileData != null)
-                        {
-                            <img style="width:60px;height:60px" src="data:image/*;base64,@(Convert.ToBase64String(item.FileData))" alt="" />
-                        }
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StartDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EndDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Archived)
-                    </td>
+                if (item.Archived == false)
+                {
+                    <tr>
+                        <td>
+                            @if (item.FileData != null)
+                            {
+                                <img style="width:60px;height:60px" src="data:image/*;base64,@(Convert.ToBase64String(item.FileData))" alt="" />
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EndDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Archived)
+                        </td>
                         @if (item.ProjectPriority.Name == "High" || item.ProjectPriority.Name == "Urgent")
                         {
-                        <td><span class="badge bg-high">@item.ProjectPriority?.Name</span></td>
-                    }
-                    else
-                    {
-                        <td><span class="badge bg-dark">@item.ProjectPriority?.Name</span></td>
-                    }
+                            <td><span class="badge bg-high">@item.ProjectPriority?.Name</span></td>
+                        }
+                        else
+                        {
+                            <td><span class="badge bg-dark">@item.ProjectPriority?.Name</span></td>
+                        }
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
                             <a asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i></a>
@@ -74,6 +76,7 @@
                         </td>
                     </tr>
                 }
+            }
         </tbody>
     </table>
 </div>
