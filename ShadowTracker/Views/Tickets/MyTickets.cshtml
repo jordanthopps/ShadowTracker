@@ -66,12 +66,27 @@
             <td>
                 @Html.DisplayFor(modelItem => item.TicketType.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-            </td>
+            @if (item.TicketStatus.Name == "New")
+            {
+                <td><span class="badge badge-success">@item.TicketStatus.Name </span></td>
+            }
+            else if (item.TicketStatus.Name == "Development")
+            {
+                <td><span class="badge badge-development">@item.TicketStatus.Name </span></td>
+            }
+            else
+            {
+                <td><span class="badge badge-other">@item.TicketStatus.Name </span></td>
+            }
+            @if (item.TicketPriority.Name == "Urgent")
+            {
+                <td><span class="badge badge-urgent">@item.TicketPriority.Name </span></td>
+
+            }
+            else
+            {
+                <td><span class="badge">@item.TicketPriority.Name </span></td>
+            }
             <td>
                 @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
             </td>

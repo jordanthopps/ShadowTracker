@@ -37,29 +37,44 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Archived)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Project.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketType.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-                </td>
-                <td>
-                    <a asp-controller="Tickets" asp-action="AssignDeveloper" asp-route-ticketId="@item.Id" class="btn btn-primary btn-sm">Assign Ticket</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Archived)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Project.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TicketType.Name)
+            </td>
+            @if (item.TicketStatus.Name == "New")
+            {
+                <td><span class="badge badge-success">@item.TicketStatus.Name </span></td>
+            }
+            else if (item.TicketStatus.Name == "Development")
+            {
+                <td><span class="badge badge-development">@item.TicketStatus.Name </span></td>
+            }
+            else
+            {
+                <td><span class="badge badge-other">@item.TicketStatus.Name </span></td>
+            }
+            @if (item.TicketPriority.Name == "Urgent")
+            {
+                <td><span class="badge badge-urgent">@item.TicketPriority.Name </span></td>
+
+            }
+            else
+            {
+                <td><span class="badge">@item.TicketPriority.Name </span></td>
+            }
+            <td>
+                <a asp-controller="Tickets" asp-action="AssignDeveloper" asp-route-ticketId="@item.Id" class="btn btn-primary btn-sm">Assign Ticket</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

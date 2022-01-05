@@ -30,31 +30,39 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @if (item.FileData != null)
+            @if (item.Archived == false)
+            {
+                <tr>
+                    <td>
+                        @if (item.FileData != null)
+                        {
+                            <img style="width:60px;height: 60px" src="data:image/*;base64,@(Convert.ToBase64String(item.FileData))" alt="" />
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    @if (item.ProjectPriority.Name == "High" || item.ProjectPriority.Name == "Urgent")
                     {
-                        <img style="width:60px;height: 60px" src="data:image/*;base64,@(Convert.ToBase64String(item.FileData))" alt="" />
+                        <td><span class="badge bg-high">@item.ProjectPriority?.Name</span></td>
                     }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
-                </td>
-                <td>
-                    <a asp-action="AssignPM" asp-route-projectId="@item.Id"><i class="bi bi-person-plus"></i></a>
-                    <a asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i></a>
-                    <a asp-action="Archive" asp-route-id="@item.Id"><i class="bi bi-archive"></i></a>
-                </td>
-            </tr>
+                    else
+                    {
+                        <td><span class="badge bg-dark">@item.ProjectPriority?.Name</span></td>
+                    }
+                    <td>
+                        <a asp-action="AssignPM" asp-route-projectId="@item.Id"><i class="bi bi-person-plus"></i></a>
+                        <a asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i></a>
+                        <a asp-action="Archive" asp-route-id="@item.Id"><i class="bi bi-archive"></i></a>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
