@@ -1,21 +1,23 @@
-﻿@model ShadowTracker.Models.Company
+﻿@model ShadowTracker.Models.ViewModels.DashboardViewModel
 @using Microsoft.AspNetCore.Identity
-@using ShadowTracker.Services.Interfaces 
+@using ShadowTracker.Services.Interfaces
+@using ShadowTracker.Models.Enums
+@using System.Linq
 
 @inject UserManager<BTUser> UserManager
 @inject IBTRolesService RolesService
 
 @{
-    ViewData["Title"] = "Details";
-    BTUser btUser = await UserManager.GetUserAsync(User);
-}
 
-@if (Model.Id == btUser.CompanyId)
+    ViewData["Title"] = "Dashboard";
+    BTUser btUser = await UserManager.GetUserAsync(User);}
+
+@if (Model.Company.Id == btUser.CompanyId)
 {
 <div class="container-fluid">
-    <h4>About @Html.DisplayFor(model => model.Name)</h4>
-    <p>@btUser.Company.Description</p>
+    <h4>About @Html.DisplayFor(model => model.Company.Name)</h4>
     <hr />
+    <p>Click <a asp-controller="Invites" asp-action="Create">here</a> to invite a new member to your company!</p>
     <div class="col-md-3 ">
         <div>
             <div class="card m-1 p-2">
@@ -27,8 +29,8 @@
                     @* Looop over Company members. Display Name and Role *@
                     @foreach (BTUser member in Model.Members)
                     {
-                            <span style="font-weight:bold">@member.FullName</span>
-                            <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
+                        <span style="font-weight:bold">@member.FullName</span>
+                        <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
 
                         <hr />
                     }
@@ -36,6 +38,8 @@
             </div>
         </div>
     </div>
+
+
     @*<dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
@@ -68,9 +72,5 @@
                 @Html.DisplayFor(model => model.FileContentType)
             </dd>
         </dl>*@
-
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-    </div>
 </div>
 }

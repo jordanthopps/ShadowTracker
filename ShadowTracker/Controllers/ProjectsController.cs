@@ -25,9 +25,9 @@ namespace ShadowTracker.Controllers
         private readonly IBTLookupService _lookupService;
         private readonly IBTFileService _fileService;
         private readonly IBTNotificationService _notificationService;
-        private readonly BTTicketService _ticketService;
+        private readonly IBTTicketService _ticketService;
 
-        public ProjectsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService, IBTNotificationService notificationService, BTTicketService ticketService)
+        public ProjectsController(UserManager<BTUser> userManager, IBTProjectService projectService, IBTRolesService rolesService, IBTLookupService lookupService, IBTFileService fileService, IBTNotificationService notificationService, IBTTicketService ticketService)
         {
             _userManager = userManager;
             _projectService = projectService;
@@ -306,7 +306,7 @@ namespace ShadowTracker.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("AllProjects");
                             }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -352,12 +352,15 @@ namespace ShadowTracker.Controllers
         {
             int companyId = User.Identity.GetCompanyId().Value;
             Project project = await _projectService.GetProjectByIdAsync(id, companyId);
-
             project.Archived = true;
-
             await _projectService.ArchiveProjectAsync(project);
-
-            
+            foreach (Ticket ticket in project.Tickets)
+            {
+                ticket.ArchivedByProject = true;
+                ticket.Archived = true;
+                await _ticketService.ArchiveTicketAsync(ticket);
+            }
+           
             return RedirectToAction(nameof(AllProjects));
         }
 

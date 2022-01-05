@@ -57,7 +57,23 @@ namespace ShadowTracker.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> NewDashboard(string swalMessage = null)
+        public async Task<IActionResult> LegacyDashboard(string swalMessage = null)
+        {
+            ViewData["SwalMessage"] = swalMessage;
+
+            DashboardViewModel model = new();
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            model.Company = await _companyInfoService.GetCompanyInfoByIdAsync(companyId);
+            model.Projects = await _companyInfoService.GetAllProjectsAsync(companyId);
+            model.Tickets = await _companyInfoService.GetAllTicketsAsync(companyId);
+            model.Members = await _companyInfoService.GetAllMembersAsync(companyId);
+
+
+            return View(model);
+        }
+        
+        public async Task<IActionResult> CompanyDashboard(string swalMessage = null)
         {
             ViewData["SwalMessage"] = swalMessage;
 

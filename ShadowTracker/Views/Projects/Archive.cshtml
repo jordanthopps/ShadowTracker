@@ -4,11 +4,9 @@
     ViewData["Title"] = "Archive";
 }
 
-<h1>Archive</h1>
 
 <h3>Are you sure you want to archive this project?</h3>
 <div>
-    <h4>Project</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -24,12 +22,6 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.StartDate)
         </dt>
         <dd class = "col-sm-10">
@@ -42,46 +34,18 @@
             @Html.DisplayFor(model => model.EndDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Archived)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Archived)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FileName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FileName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FileData)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FileData)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FileContentType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FileContentType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Company)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Company.Id)
-        </dd class>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ProjectPriority)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProjectPriority.Id)
+            @Html.DisplayFor(model => model.ProjectPriority.Name)
         </dd class>
     </dl>
     
-    <form asp-action="Archive">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Archive" class="btn btn-danger" /> |
-        <a asp-action="AllProjects">Back to List</a>
-    </form>
+    <div class="row pt-3 gy-2">
+        <form asp-action="Archive">
+            <a class="btn btn-outline-jhprimary" asp-action="AllProjects">Return to All Projects</a>
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Archive" class="btn btn-danger" />
+        </form>
+    </div>
 </div>
