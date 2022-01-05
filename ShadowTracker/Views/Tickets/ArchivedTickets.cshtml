@@ -6,10 +6,7 @@
 
 <h1>Archived Tickets</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-responsive table-hover">
     <thead>
         <tr>
             <th>
@@ -22,9 +19,6 @@
                 @Html.DisplayNameFor(model => model.Created)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Updated)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Archived)
             </th>
             <th>
@@ -34,19 +28,16 @@
                 @Html.DisplayNameFor(model => model.Project)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TicketType)
+                Ticket Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TicketStatus)
+                Ticket Status
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TicketPriority)
+                Ticket Priority
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OwnerUser)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeveloperUser)
+                Developer User
             </th>
             <th></th>
         </tr>
@@ -64,9 +55,6 @@
                 @Html.DisplayFor(modelItem => item.Created)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Updated)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Archived)
             </td>
             <td>
@@ -76,13 +64,13 @@
                 @Html.DisplayFor(modelItem => item.Project.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TicketType.Id)
+                @Html.DisplayFor(modelItem => item.TicketType.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TicketStatus.Id)
+                @Html.DisplayFor(modelItem => item.TicketStatus.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TicketPriority.Id)
+                @Html.DisplayFor(modelItem => item.TicketPriority.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.OwnerUser.FullName)
@@ -91,9 +79,9 @@
                 @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
+                <a asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i></a>
+                <a asp-action="Restore" asp-route-id="@item.Id"><i class="bi bi-node-plus"></i></a>
             </td>
         </tr>
 }

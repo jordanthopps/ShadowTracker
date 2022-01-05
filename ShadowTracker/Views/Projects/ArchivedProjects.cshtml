@@ -6,20 +6,17 @@
 
 <h1>Archived Projects</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FileData)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.StartDate)
@@ -31,18 +28,6 @@
                 @Html.DisplayNameFor(model => model.Archived)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileContentType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.ProjectPriority)
             </th>
             <th></th>
@@ -52,13 +37,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                @if (item.FileData != null)
+                {
+                    <img style="width:60px;height:60px" src="data:image/*;base64,@(Convert.ToBase64String(item.FileData))" alt="" />
+                }
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Created)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StartDate)
@@ -70,27 +58,12 @@
                 @Html.DisplayFor(modelItem => item.Archived)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FileName)
+                @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
             </td>
             <td>
-                @if (item.FileData != null)
-                {
-                <img style="width:60px;height:60px" src="data:image/*;base64,@(Convert.ToBase64String(item.FileData))" alt="" />
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FileContentType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                <a asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
+                <a asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i></a>
+                <a asp-action="Restore" asp-route-id="@item.Id"><i class="bi bi-node-plus"></i></a>
             </td>
         </tr>
 }

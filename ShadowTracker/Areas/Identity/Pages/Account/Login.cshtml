@@ -3,17 +3,13 @@
 
 @{
     ViewData["Title"] = "Log in";
-    Layout = "DevelopmentalLayout";
 }
-<div class="mx-4 container-fluid">
-    <h1>@ViewData["Title"]</h1>
+<div class="row justify-content-center">
 
-</div>
-<div class="mx-4 row">
     <div class="col-md-4">
+        <h1>Ticketmaster Login</h1>
         <section>
             <form id="account" method="post">
-                <h4>Use a local account to log in.</h4>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
@@ -27,49 +23,51 @@
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label asp-for="Input.RememberMe">
+                    <div class="checkbox-dark">
+                        <label style="color: #373948!important" asp-for="Input.RememberMe">
                             <input asp-for="Input.RememberMe" />
                             @Html.DisplayNameFor(m => m.Input.RememberMe)
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Log in</button>
+                    <button type="submit" class="btn btn-outline-primary">Log in</button>
                 </div>
                 <div class="form-group">
                     <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                        <a style="color: #373948!important" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
                     </p>
                     <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                        <a style="color: #373948!important" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
                     </p>
                     <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                        <a style="color: #373948!important" id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
                     </p>
                 </div>
             </form>
         </section>
     </div>
-    <div class="col-md-6 col-md-offset-2">
+    <div class="col-md-4" style="padding-top: 4.5rem;">
         <section>
-            <h4>Use another service to log in.</h4>
-            <hr />
             <div class="mb-1 text-center">
                 <form class="" id="account" method="post">
                     <div class="form-group">
                         <div class="row">
                             <div class="col-12 btn-block">
-                                <button type="submit" style="width:inherit;height:min-content" class="btn btn-primary p-10 m-2" name="demoEmail" value="DemoAdminEmail">Demo Admin</button>
-                                <button type="submit" style="width:inherit;height:min-content" class="btn btn-primary p-10 m-2" name="demoEmail" value="DemoPMEmail">Demo PM</button>
-                                <button type="submit" style="width:inherit;height:min-content" class="btn btn-primary p-10 m-2" name="demoEmail" value="DemoDevEmail">Demo Developer</button>
-                                <button type="submit" style="width:inherit;height:min-content" class="btn btn-primary p-10 m-2" name="demoEmail" value="DemoSubEmail">Demo Submitter</button>
+                                <button type="submit" style="width:inherit;height:min-content" class="btn btn-outline-primary p-10 m-2" name="demoEmail" value="DemoAdminEmail">Demo Admin</button>
+                                <button disabled type="submit" style="width:inherit;height:min-content" class="btn btn-dark p-10 m-2" name="demoEmail" value="DemoPMEmail">Demo PM</button>
+                                <button disabled type="submit" style="width:inherit;height:min-content" class="btn btn-dark p-10 m-2" name="demoEmail" value="DemoDevEmail">Demo Developer</button>
+                                <button disabled type="submit" style="width:inherit;height:min-content" class="btn btn-dark p-10 m-2" name="demoEmail" value="DemoSubEmail">Demo Submitter</button>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
         </section>
+        <hr />
+        <p class="text-center">Welcome to <strong>Ticketmaster</strong>, a project management platform harnessing multi-tenancy, ticket delegation, ticket histories, authorization control, archive/restore power, comments, attachments, and more.</p>
+        <br />
+        <p class="text-center">Click a Demo button to sample the MVC application.</p>
     </div>
 </div>
 

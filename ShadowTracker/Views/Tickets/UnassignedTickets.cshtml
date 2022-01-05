@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<ShadowTracker.Models.Ticket>
-@using ShadowTracker.Models.Enums 
+@using ShadowTracker.Models.Enums
 
 @{
     ViewData["Title"] = "Unassigned Tickets";
@@ -7,7 +7,7 @@
 
 <h1>Unassigned Tickets</h1>
 
-<table class="table">
+<table class="table table-responsive table-hover">
     <thead>
         <tr>
             <th>
@@ -20,16 +20,16 @@
                 @Html.DisplayNameFor(model => model.Project)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TicketType)
+                Ticket Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TicketStatus)
+                Ticket Status
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TicketPriority)
+                Ticket Priority
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DeveloperUser)
+                Developer User
             </th>
             <th></th>
         </tr>
@@ -57,10 +57,7 @@
                     @Html.DisplayFor(modelItem => item.TicketPriority.Name)
                 </td>
                 <td>
-                    <a class="btn btn-primary btn-sm">Assign Ticket</a> @*TODO:*@ 
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-controller="Tickets" asp-action="AssignDeveloper" asp-route-ticketId="@item.Id" class="btn btn-primary btn-sm">Assign Ticket</a>
                 </td>
             </tr>
         }

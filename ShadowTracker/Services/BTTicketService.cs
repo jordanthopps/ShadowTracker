@@ -131,6 +131,33 @@ public class BTTicketService : IBTTicketService
 
     #endregion
 
+    public async Task<List<Ticket>> GetAllTicketsByProjectAsync(int projectId)
+    {
+        try
+        {
+            List<Ticket> tickets = await _context.Projects
+                                                 .Where(p => p.Id == projectId)
+                                                 .SelectMany(p => p.Tickets)
+                                                    .Include(t => t.Attachments)
+                                                    .Include(t => t.Comments)
+                                                    .Include(t => t.DeveloperUser)
+                                                    .Include(t => t.History)
+                                                    .Include(t => t.OwnerUser)
+                                                    .Include(t => t.TicketPriority)
+                                                    .Include(t => t.TicketStatus)
+                                                    .Include(t => t.TicketType)
+                                                    .Include(t => t.Project)
+                                                 .ToListAsync();
+
+            return tickets;
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
 
     #region Get All Tickets By Company
     public async Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId)
@@ -224,6 +251,7 @@ public class BTTicketService : IBTTicketService
     }
 
     #endregion
+
 
     #region Get All Tickets By Type
 

@@ -4,90 +4,72 @@
     ViewData["Title"] = "Archive";
 }
 
-<h1>Restore</h1>
-
-<h3>You are about to restore this ticket</h3>
+<h3>You are about to restore this ticket:</h3>
 <div>
-    <h4>Ticket</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Archived)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Archived)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ArchivedByProject)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ArchivedByProject)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Project)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Project.Name)
-        </dd class>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketType)
+        </dd>
+        <dt class="col-sm-2">
+            Ticket Type
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TicketType.Id)
-        </dd class>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketStatus)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TicketType.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Ticket Status
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TicketStatus.Id)
-        </dd class>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketPriority)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TicketStatus.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Ticket Priority
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TicketPriority.Id)
-        </dd class>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OwnerUser)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TicketPriority.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Developer
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OwnerUser.FullName)
-        </dd class>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeveloperUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeveloperUser.Id)
-        </dd class>
+        <dd class="col-sm-10">
+            @if (Model.DeveloperUserId != null)
+            {
+                @Html.DisplayFor(model => model.DeveloperUser.Id)
+            }
+        </dd>
     </dl>
-    
+
     <form asp-action="Restore">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Restore" class="btn btn-success" /> |
-        <a asp-action="AllTickets">Back to List</a>
+        <a class="btn btn-outline-jhprimary" asp-action="ArchivedTickets">Return to Archived Tickets</a>
+        <input type="submit" value="Restore" class="btn btn-success" /> 
     </form>
 </div>

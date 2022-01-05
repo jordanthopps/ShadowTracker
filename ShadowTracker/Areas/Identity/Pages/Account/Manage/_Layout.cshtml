@@ -1,13 +1,11 @@
 ﻿@{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
     {
-        //Layout = (string)parentLayout;
-        Layout = "DevelopmentalLayout";
+        Layout = (string)parentLayout;
     }
     else
     {
-        //Layout = "/Areas/Identity/Pages/_Layout.cshtml";
-        Layout = "DevelopmentalLayout"; //TODO: Change this to _Layout
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
 
     }
 }
