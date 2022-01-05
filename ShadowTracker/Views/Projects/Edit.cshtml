@@ -30,7 +30,7 @@
                     <div class="col">
                         <div class="form-group">
                             <label asp-for="Project.Description" class="control-label"></label>
-                            <input asp-for="Project.Description" class="form-control" />
+                            <textarea asp-for="Project.Description" rows="4" class="form-control" required placeholder="Add comment ..."></textarea>
                             <span asp-validation-for="Project.Description" class="text-danger"></span>
                         </div>
                     </div>
